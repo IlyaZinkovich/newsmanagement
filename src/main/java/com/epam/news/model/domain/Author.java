@@ -1,4 +1,4 @@
-package com.epam.news.domain;
+package com.epam.news.model.domain;
 
 
 public class Author {

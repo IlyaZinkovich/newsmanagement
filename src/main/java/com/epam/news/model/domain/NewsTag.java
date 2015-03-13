@@ -1,12 +1,13 @@
-package com.epam.news.domain;
+package com.epam.news.model.domain;
 
-public class NewsAuthor {
+
+public class NewsTag {
 
     private int id;
     private int newsId;
-    private int authorId;
+    private int tagId;
 
-    public NewsAuthor() {
+    public NewsTag() {
     }
 
     public int getId() {
@@ -25,11 +26,11 @@ public class NewsAuthor {
         this.newsId = newsId;
     }
 
-    public int getAuthorId() {
-        return authorId;
+    public int getTagId() {
+        return tagId;
     }
 
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
+    public void setTagId(int tagId) {
+        this.tagId = tagId;
     }
 }

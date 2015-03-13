@@ -1,5 +1,4 @@
-package com.epam.news.domain;
-
+package com.epam.news.model.domain;
 
 import java.util.Date;
 
@@ -61,5 +60,17 @@ public class News {
 
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = modificationDate;
+    }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "id=" + id +
+                ", shortText='" + shortText + '\'' +
+                ", fullText='" + fullText + '\'' +
+                ", title='" + title + '\'' +
+                ", creationDate=" + creationDate +
+                ", modificationDate=" + modificationDate +
+                '}';
     }
 }
