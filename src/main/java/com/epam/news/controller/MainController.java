@@ -1,15 +1,16 @@
 package com.epam.news.controller;
 
 
-import com.epam.news.model.persistence.interfaces.NewsDAO;
 import com.epam.news.model.domain.News;
+import com.epam.news.model.persistence.interfaces.NewsDAO;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Date;
+
 public class MainController {
     public static void main(String[] args) {
-        ApplicationContext context =
-                new ClassPathXmlApplicationContext("spring-module.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring-module.xml");
 
         NewsDAO newsDAO = (NewsDAO) context.getBean("newsDAO");
         News news = new News();
@@ -17,7 +18,9 @@ public class MainController {
         news.setTitle("Title");
         news.setShortText("Short News");
         news.setFullText("Full News");
+        news.setCreationDate(new Date());
+        news.setModificationDate(new Date());
         newsDAO.insert(news);
-        newsDAO.listAll().forEach(System.out :: println);
+        for (News n : newsDAO.listAll()) System.out.println(n);
     }
 }

@@ -1,11 +1,21 @@
 CREATE TABLE News (
-  id NUMBER(20) NOT NULL,
+  news_id NUMBER(20) NOT NULL,
   short_text VARCHAR2(100) NOT NULL,
   full_text VARCHAR2(2000) NOT NULL,
   title VARCHAR2(30) NOT NULL,
   creation_date TIMESTAMP NOT NULL,
   modification_date DATE NOT NULL
-  CONSTRAINT "news_id" PRIMARY KEY (id)
+  CONSTRAINT "news_id" PRIMARY KEY (news_id)
+);
+
+CREATE TABLE News (
+  news_id NUMBER(20) NOT NULL,
+  short_text VARCHAR2(100) NOT NULL,
+  full_text VARCHAR2(2000) NOT NULL,
+  title VARCHAR2(30) NOT NULL,
+  creation_date TIMESTAMP NOT NULL,
+  modification_date DATE NOT NULL,
+  primary key (news_id)
 );
 
 CREATE SEQUENCE AUTO_INCREMENT_NEWS_ID
