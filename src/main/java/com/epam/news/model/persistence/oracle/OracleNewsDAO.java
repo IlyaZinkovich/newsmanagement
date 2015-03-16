@@ -25,6 +25,7 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
         "WHERE news_id = ?";
     private final String DELETE_NEWS_QUERY = "DELETE News WHERE news_id = ?";
     private final String SELECT_ALL_NEWS_QUERY = "SELECT * FROM News";
+    private final String SELECT_NEWS_BY_ID_QUERY = "SELECT * FROM News WHERE news_id = ?";
 
     @Override
     public News create() {
@@ -59,6 +60,13 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
     public PreparedStatement prepareStatementForDelete(Connection connection, News news) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_NEWS_QUERY);
         preparedStatement.setInt(1, news.getId());
+        return preparedStatement;
+    }
+
+    @Override
+    protected PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_BY_ID_QUERY);
+        preparedStatement.setInt(1, id);
         return preparedStatement;
     }
 

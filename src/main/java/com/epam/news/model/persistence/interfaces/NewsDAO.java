@@ -9,6 +9,6 @@ public interface NewsDAO {
     public void insert(News news);
     public void update(News news);
     public void delete(News news);
+    public News findByID(int id);
     public List<News> findAll();
-
 }

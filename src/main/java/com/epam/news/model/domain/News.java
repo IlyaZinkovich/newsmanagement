@@ -1,5 +1,6 @@
 package com.epam.news.model.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,9 +12,15 @@ public class News {
     private String title;
     private Date creationDate;
     private Date modificationDate;
-    private List<Author> authors;
+    private List<NewsAuthor> authors;
     private List<Comment> comments;
-    private List<Tag> tags;
+    private List<NewsTag> tags;
+
+    public News() {
+        this.authors = new ArrayList<>();
+        this.comments = new ArrayList<>();
+        this.tags = new ArrayList<>();
+    }
 
     public int getId() {
         return id;
@@ -63,13 +70,6 @@ public class News {
         this.modificationDate = modificationDate;
     }
 
-    public List<Author> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
-    }
     public List<Comment> getComments() {
         return comments;
     }
@@ -78,15 +78,20 @@ public class News {
         this.comments = comments;
     }
 
-    public List<Tag> getTags() {
+    public List<NewsAuthor> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(List<NewsAuthor> authors) {
+        this.authors = authors;
+    }
+
+    public List<NewsTag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(List<NewsTag> tags) {
         this.tags = tags;
-    }
-
-    public News() {
     }
 
     @Override

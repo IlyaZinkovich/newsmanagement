@@ -13,16 +13,16 @@ import java.util.Date;
 public class MainController {
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring-module.xml");
-
-        NewsDAO newsDAO = (NewsDAO) context.getBean("newsDAO");
-        News news = new News();
-        news.setId(1);
-        news.setTitle("Title");
-        news.setShortText("Short News");
-        news.setFullText("Full News");
-        news.setCreationDate(new Date());
-        news.setModificationDate(new Date());
-        newsDAO.insert(news);
+        NewsDAO newsDAO = (NewsDAO) context.getBean("oracleNewsDAO");
+        News news = newsDAO.findByID(2);
+        newsDAO.delete(news);
+//        news.setId(1);
+//        news.setTitle("TTitle");
+//        news.setShortText("SShort News");
+//        news.setFullText("FFull News");
+//        news.setCreationDate(new Date());
+//        news.setModificationDate(new Date());
+//        newsDAO.insert(news);
         for (News n : newsDAO.findAll()) System.out.println(n);
     }
 }

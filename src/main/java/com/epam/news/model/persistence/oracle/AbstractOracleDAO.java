@@ -1,7 +1,5 @@
 package com.epam.news.model.persistence.oracle;
 
-
-import com.epam.news.model.persistence.interfaces.GenericDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public abstract class AbstractOracleDAO<Item> implements GenericDAO  {
+public abstract class AbstractOracleDAO<Item> {
 
     @Autowired
     private DataSource dataSource;
@@ -22,8 +20,10 @@ public abstract class AbstractOracleDAO<Item> implements GenericDAO  {
     protected abstract PreparedStatement prepareStatementForUpdate(Connection connection, Item item) throws SQLException;
     protected abstract PreparedStatement prepareStatementForInsert(Connection connection, Item item) throws SQLException;
     protected abstract PreparedStatement prepareStatementForDelete(Connection connection, Item item) throws SQLException;
+    protected abstract PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException;
     protected abstract PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException;
     protected abstract List<Item> parseResultSet(ResultSet resultSet) throws SQLException;
+
 
     public void insert(Item item) {
         Connection connection = null;
@@ -77,6 +77,28 @@ public abstract class AbstractOracleDAO<Item> implements GenericDAO  {
                 e.printStackTrace();
             }
         }
+    }
+
+    public Item findByID(int id) {
+        List<Item> newsList = new LinkedList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = prepareStatementForFindByID(connection, id);
+            ResultSet rs = preparedStatement.executeQuery();
+            newsList = parseResultSet(rs);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return newsList.get(0);
+
     }
 
     public List<Item> findAll() {
