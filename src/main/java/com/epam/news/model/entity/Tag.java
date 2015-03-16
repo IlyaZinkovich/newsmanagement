@@ -1,20 +1,20 @@
 package com.epam.news.model.entity;
 
 
-public class Tag {
+public class Tag implements Identified {
 
-    private int tag;
+    private int id;
     private String name;
 
     public Tag() {
     }
 
-    public int getTag() {
-        return tag;
+    public int getId() {
+        return id;
     }
 
-    public void setTag(int tag) {
-        this.tag = tag;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

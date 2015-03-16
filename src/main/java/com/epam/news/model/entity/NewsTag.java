@@ -1,7 +1,7 @@
 package com.epam.news.model.entity;
 
 
-public class NewsTag {
+public class NewsTag implements Identified {
 
     private int id;
     private int newsId;

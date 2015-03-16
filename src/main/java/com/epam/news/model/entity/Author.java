@@ -1,7 +1,7 @@
 package com.epam.news.model.entity;
 
 
-public class Author {
+public class Author implements Identified {
 
     private int id;
     private String name;

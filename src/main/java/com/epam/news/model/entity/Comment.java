@@ -3,7 +3,7 @@ package com.epam.news.model.entity;
 
 import java.util.Date;
 
-public class Comment {
+public class Comment implements Identified {
 
     private int id;
     private String commentText;

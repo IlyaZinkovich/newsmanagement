@@ -1,6 +1,6 @@
 package com.epam.news.model.entity;
 
-public class NewsAuthor {
+public class NewsAuthor implements Identified {
 
     private int id;
     private int newsId;
@@ -32,4 +32,5 @@ public class NewsAuthor {
     public void setAuthorId(int authorId) {
         this.authorId = authorId;
     }
+
 }

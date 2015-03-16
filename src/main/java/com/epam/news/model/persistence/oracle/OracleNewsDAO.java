@@ -14,9 +14,6 @@ import java.util.*;
 @Component
 public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
 
-    @Autowired
-    private DataSource dataSource;
-
     private final String INSERT_NEWS_QUERY = "INSERT INTO News " +
             "(short_text, full_text, title, creation_date, modification_date)" +
             " VALUES (?, ?, ?, ?, ?)";
@@ -26,15 +23,14 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
     private final String DELETE_NEWS_QUERY = "DELETE News WHERE news_id = ?";
     private final String SELECT_ALL_NEWS_QUERY = "SELECT * FROM News";
     private final String SELECT_NEWS_BY_ID_QUERY = "SELECT * FROM News WHERE news_id = ?";
+    private final String FIND_NEWS_ID_BY_AUTHOR_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date \n" +
+            "FROM News" +
+            "INNER JOIN News_author ON News_author.news_id = News.news_id" +
+            "INNER JOIN Author ON Author.author_id = News_author.AUTHOR_ID" +
+            "WHERE Author.name = ?";
 
     @Override
-    public News create() {
-        return null;
-    }
-
-
-    @Override
-    public PreparedStatement prepareStatementForUpdate(Connection connection, News news) throws SQLException {
+    protected PreparedStatement prepareStatementForUpdate(Connection connection, News news) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_NEWS_QUERY);
         preparedStatement.setString(1, news.getShortText());
         preparedStatement.setString(2, news.getFullText());
@@ -46,7 +42,7 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
     }
 
     @Override
-    public PreparedStatement prepareStatementForInsert(Connection connection, News news) throws SQLException {
+    protected PreparedStatement prepareStatementForInsert(Connection connection, News news) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEWS_QUERY);
         preparedStatement.setString(1, news.getShortText());
         preparedStatement.setString(2, news.getFullText());
@@ -57,7 +53,7 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
     }
 
     @Override
-    public PreparedStatement prepareStatementForDelete(Connection connection, News news) throws SQLException {
+    protected PreparedStatement prepareStatementForDelete(Connection connection, News news) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_NEWS_QUERY);
         preparedStatement.setInt(1, news.getId());
         return preparedStatement;
@@ -71,25 +67,53 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
     }
 
     @Override
-    public PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
+    protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_NEWS_QUERY);
         return preparedStatement;
     }
 
     @Override
-    protected List<News> parseResultSet(ResultSet rs) throws SQLException {
+    protected List<News> parseResultSet(ResultSet resultSet) throws SQLException {
         List<News> list = new LinkedList<>();
-        while (rs.next()) {
+        while (resultSet.next()) {
             News news = new News();
-            news.setId(rs.getInt("news_id"));
-            news.setShortText(rs.getString("short_text"));
-            news.setFullText(rs.getString("full_text"));
-            news.setTitle(rs.getString("title"));
-            news.setCreationDate(new java.util.Date(rs.getTimestamp("creation_date").getTime()));
-            news.setModificationDate(new java.util.Date(rs.getDate("modification_date").getTime()));
+            news.setId(resultSet.getInt("news_id"));
+            news.setShortText(resultSet.getString("short_text"));
+            news.setFullText(resultSet.getString("full_text"));
+            news.setTitle(resultSet.getString("title"));
+            news.setCreationDate(new java.util.Date(resultSet.getTimestamp("creation_date").getTime()));
+            news.setModificationDate(new java.util.Date(resultSet.getDate("modification_date").getTime()));
             list.add(news);
         }
         return list;
     }
 
+    protected PreparedStatement preparedStatementForFindNewsIDByAuthorName(Connection connection, String authorName) throws SQLException{
+        PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_ID_BY_AUTHOR_QUERY);
+        preparedStatement.setString(1, authorName);
+        return preparedStatement;
+    }
+
+    @Override
+    public List<News> findByAuthorName(String authorName) {
+        List<News> newsList = new LinkedList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = preparedStatementForFindNewsIDByAuthorName(connection, authorName);
+            ResultSet rs = preparedStatement.executeQuery();
+            newsList = parseResultSet(rs);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (newsList.isEmpty()) return null;
+        return newsList;
+    }
 }

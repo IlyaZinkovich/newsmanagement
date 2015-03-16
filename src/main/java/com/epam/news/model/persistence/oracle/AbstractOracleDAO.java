@@ -1,5 +1,6 @@
 package com.epam.news.model.persistence.oracle;
 
+import com.epam.news.model.entity.Identified;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public abstract class AbstractOracleDAO<Item> {
 
     @Autowired
-    private DataSource dataSource;
+    protected DataSource dataSource;
 
     protected abstract PreparedStatement prepareStatementForUpdate(Connection connection, Item item) throws SQLException;
     protected abstract PreparedStatement prepareStatementForInsert(Connection connection, Item item) throws SQLException;
@@ -29,7 +30,11 @@ public abstract class AbstractOracleDAO<Item> {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = prepareStatementForInsert(connection, item);
+            PreparedStatement preparedStatement = prepareStatementForFindByID(connection, ((Identified) item).getId());
+            if (preparedStatement.executeQuery() != null)
+                preparedStatement = prepareStatementForUpdate(connection, item);
+            else
+                preparedStatement = prepareStatementForInsert(connection, item);
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException e) {
@@ -80,13 +85,13 @@ public abstract class AbstractOracleDAO<Item> {
     }
 
     public Item findByID(int id) {
-        List<Item> newsList = new LinkedList<>();
+        List<Item> items = new LinkedList<>();
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             PreparedStatement preparedStatement = prepareStatementForFindByID(connection, id);
             ResultSet rs = preparedStatement.executeQuery();
-            newsList = parseResultSet(rs);
+            items = parseResultSet(rs);
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,18 +102,18 @@ public abstract class AbstractOracleDAO<Item> {
                 e.printStackTrace();
             }
         }
-        if (newsList.isEmpty()) return null;
-        return newsList.get(0);
+        if (items.isEmpty()) return null;
+        return items.get(0);
     }
 
     public List<Item> findAll() {
-        List<Item> newsList = new LinkedList<>();
+        List<Item> items = new LinkedList<>();
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             PreparedStatement preparedStatement = prepareStatementForFindAll(connection);
             ResultSet rs = preparedStatement.executeQuery();
-            newsList = parseResultSet(rs);
+            items = parseResultSet(rs);
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -119,7 +124,7 @@ public abstract class AbstractOracleDAO<Item> {
                 e.printStackTrace();
             }
         }
-        return newsList;
+        return items;
     }
 
 }

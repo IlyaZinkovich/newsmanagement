@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class News {
+public class News implements Identified {
 
     private int id;
     private String shortText;
@@ -12,9 +12,9 @@ public class News {
     private String title;
     private Date creationDate;
     private Date modificationDate;
-    private List<NewsAuthor> authors;
+    private List<Author> authors;
     private List<Comment> comments;
-    private List<NewsTag> tags;
+    private List<Tag> tags;
 
     public News() {
         this.authors = new ArrayList<>();
@@ -78,19 +78,19 @@ public class News {
         this.comments = comments;
     }
 
-    public List<NewsAuthor> getAuthors() {
+    public List<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(List<NewsAuthor> authors) {
+    public void setAuthors(List<Author> authors) {
         this.authors = authors;
     }
 
-    public List<NewsTag> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<NewsTag> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
@@ -103,6 +103,9 @@ public class News {
                 ", title='" + title + '\'' +
                 ", creationDate=" + creationDate +
                 ", modificationDate=" + modificationDate +
+                ", authors=" + authors +
+                ", comments=" + comments +
+                ", tags=" + tags +
                 '}';
     }
 }
