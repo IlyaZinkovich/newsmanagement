@@ -1,6 +1,6 @@
-package com.epam.news.model.entity.model.persistence.interfaces;
+package com.epam.news.model.persistence.interfaces;
 
-import com.epam.news.model.entity.model.entity.News;
+import com.epam.news.model.entity.News;
 
 import java.util.List;
 

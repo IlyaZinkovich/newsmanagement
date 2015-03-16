@@ -1,4 +1,4 @@
-package com.epam.news.model.entity.model.entity;
+package com.epam.news.model.entity;
 
 import java.util.ArrayList;
 import java.util.Date;

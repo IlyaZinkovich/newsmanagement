@@ -1,8 +1,8 @@
-package com.epam.news.model.entity.controller;
+package com.epam.news.controller;
 
 
-import com.epam.news.model.entity.model.persistence.interfaces.NewsDAO;
-import com.epam.news.model.entity.model.entity.News;
+import com.epam.news.model.persistence.interfaces.NewsDAO;
+import com.epam.news.model.entity.News;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,7 @@ public class MainController {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring-module.xml");
         NewsDAO newsDAO = (NewsDAO) context.getBean("oracleNewsDAO");
         News news = newsDAO.findByID(2);
-        newsDAO.delete(news);
+        if (news != null) newsDAO.delete(news);
 //        news.setId(1);
 //        news.setTitle("TTitle");
 //        news.setShortText("SShort News");

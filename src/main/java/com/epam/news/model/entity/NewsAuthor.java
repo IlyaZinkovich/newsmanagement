@@ -1,4 +1,4 @@
-package com.epam.news.model.entity.model.entity;
+package com.epam.news.model.entity;
 
 public class NewsAuthor {
 

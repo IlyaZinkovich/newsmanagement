@@ -1,4 +1,4 @@
-package com.epam.news.model.entity.model.persistence.oracle;
+package com.epam.news.model.persistence.oracle;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -97,8 +97,8 @@ public abstract class AbstractOracleDAO<Item> {
                 e.printStackTrace();
             }
         }
+        if (newsList.isEmpty()) return null;
         return newsList.get(0);
-
     }
 
     public List<Item> findAll() {
