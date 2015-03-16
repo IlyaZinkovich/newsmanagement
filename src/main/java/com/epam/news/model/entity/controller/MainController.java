@@ -1,13 +1,11 @@
-package com.epam.news.controller;
+package com.epam.news.model.entity.controller;
 
 
-import com.epam.news.model.domain.News;
-import com.epam.news.model.persistence.interfaces.NewsDAO;
+import com.epam.news.model.entity.model.persistence.interfaces.NewsDAO;
+import com.epam.news.model.entity.model.entity.News;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
-
-import java.util.Date;
 
 @Controller
 public class MainController {

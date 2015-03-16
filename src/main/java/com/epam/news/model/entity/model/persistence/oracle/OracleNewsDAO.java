@@ -1,8 +1,8 @@
-package com.epam.news.model.persistence.oracle;
+package com.epam.news.model.entity.model.persistence.oracle;
 
 
-import com.epam.news.model.persistence.interfaces.NewsDAO;
-import com.epam.news.model.domain.News;
+import com.epam.news.model.entity.model.persistence.interfaces.NewsDAO;
+import com.epam.news.model.entity.model.entity.News;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

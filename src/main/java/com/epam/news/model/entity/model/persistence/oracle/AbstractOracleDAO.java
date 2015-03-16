@@ -1,4 +1,4 @@
-package com.epam.news.model.persistence.oracle;
+package com.epam.news.model.entity.model.persistence.oracle;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

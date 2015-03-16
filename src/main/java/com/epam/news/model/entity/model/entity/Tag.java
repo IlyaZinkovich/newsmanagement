@@ -1,4 +1,4 @@
-package com.epam.news.model.domain;
+package com.epam.news.model.entity.model.entity;
 
 
 public class Tag {
