@@ -8,6 +8,8 @@
 
     <context:component-scan base-package="com.epam.news" />
 
+    <!--<bean id="newsDAO" class="com.epam.news.model.persistence.oracle.OracleNewsDAO" />-->
+
     <import resource="spring-datasource.xml" />
 
 </beans>

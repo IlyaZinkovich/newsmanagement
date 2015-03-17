@@ -9,6 +9,10 @@ public class Tag implements Identified {
     public Tag() {
     }
 
+    public Tag(String name) {
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }

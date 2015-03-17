@@ -13,6 +13,12 @@ public class Comment implements Identified {
     public Comment() {
     }
 
+    public Comment(String commentText, Date creationDate, int newsId) {
+        this.commentText = commentText;
+        this.creationDate = creationDate;
+        this.newsId = newsId;
+    }
+
     public int getId() {
         return id;
     }

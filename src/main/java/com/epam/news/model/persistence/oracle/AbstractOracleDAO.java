@@ -25,7 +25,6 @@ public abstract class AbstractOracleDAO<Item> {
     protected abstract PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException;
     protected abstract List<Item> parseResultSet(ResultSet resultSet) throws SQLException;
 
-
     public void insert(Item item) {
         Connection connection = null;
         try {

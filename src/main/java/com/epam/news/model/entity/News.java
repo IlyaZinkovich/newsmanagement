@@ -22,6 +22,17 @@ public class News implements Identified {
         this.tags = new ArrayList<>();
     }
 
+    public News(String shortText, String fullText, String title, Date creationDate, Date modificationDate) {
+        this.shortText = shortText;
+        this.fullText = fullText;
+        this.title = title;
+        this.creationDate = creationDate;
+        this.modificationDate = modificationDate;
+        this.authors = new ArrayList<>();
+        this.comments = new ArrayList<>();
+        this.tags = new ArrayList<>();
+    }
+
     public int getId() {
         return id;
     }
