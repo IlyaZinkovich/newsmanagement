@@ -7,5 +7,5 @@ public interface CommentsDAO {
     public void insert(Comment comment);
     public void update(Comment comment);
     public void delete(Comment comment);
-    public Comment findByID(int id);
+    public Comment findById(int id);
 }

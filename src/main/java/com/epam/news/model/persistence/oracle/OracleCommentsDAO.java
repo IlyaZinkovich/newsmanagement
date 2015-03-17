@@ -4,12 +4,14 @@ package com.epam.news.model.persistence.oracle;
 import com.epam.news.model.entity.Comment;
 import com.epam.news.model.persistence.interfaces.CommentsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
+@Component
 public class OracleCommentsDAO extends AbstractOracleDAO<Comment> implements CommentsDAO {
 
     private final String UPDATE_COMMENTS_QUERY = "UPDATE Comments " +

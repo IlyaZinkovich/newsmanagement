@@ -7,5 +7,6 @@ public interface TagDAO {
     public void insert(Tag tag);
     public void update(Tag tag);
     public void delete(Tag tag);
-    public Tag findByID(int id);
+    public Tag findById(int id);
+    public Tag findByName(String name);
 }

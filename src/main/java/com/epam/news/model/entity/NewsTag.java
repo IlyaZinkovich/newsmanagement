@@ -7,6 +7,11 @@ public class NewsTag implements Identified {
     private int newsId;
     private int tagId;
 
+    public NewsTag(int newsId, int tagId) {
+        this.newsId = newsId;
+        this.tagId = tagId;
+    }
+
     public NewsTag() {
     }
 

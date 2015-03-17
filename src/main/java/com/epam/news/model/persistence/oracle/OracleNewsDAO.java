@@ -3,10 +3,8 @@ package com.epam.news.model.persistence.oracle;
 
 import com.epam.news.model.persistence.interfaces.NewsDAO;
 import com.epam.news.model.entity.News;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
@@ -23,11 +21,16 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
     private final String DELETE_NEWS_QUERY = "DELETE News WHERE news_id = ?";
     private final String SELECT_ALL_NEWS_QUERY = "SELECT * FROM News";
     private final String SELECT_NEWS_BY_ID_QUERY = "SELECT * FROM News WHERE news_id = ?";
-    private final String FIND_NEWS_ID_BY_AUTHOR_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date \n" +
+    private final String FIND_NEWS_BY_AUTHOR_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date " +
             "FROM News" +
             "INNER JOIN News_author ON News_author.news_id = News.news_id" +
             "INNER JOIN Author ON Author.author_id = News_author.AUTHOR_ID" +
             "WHERE Author.name = ?";
+    private final String FIND_NEWS_BY_TAG_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date " +
+            "FROM News" +
+            "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id" +
+            "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id" +
+            "WHERE Tag.tag_name = ?";
 
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, News news) throws SQLException {
@@ -88,9 +91,15 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
         return list;
     }
 
-    protected PreparedStatement preparedStatementForFindNewsIDByAuthorName(Connection connection, String authorName) throws SQLException{
-        PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_ID_BY_AUTHOR_QUERY);
+    protected PreparedStatement preparedStatementForFindNewsIdByAuthorName(Connection connection, String authorName) throws SQLException{
+        PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_BY_AUTHOR_QUERY);
         preparedStatement.setString(1, authorName);
+        return preparedStatement;
+    }
+
+    protected PreparedStatement preparedStatementForFindNewsIdByTagName(Connection connection, String tagName) throws SQLException{
+        PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_BY_TAG_QUERY);
+        preparedStatement.setString(1, tagName);
         return preparedStatement;
     }
 
@@ -100,7 +109,30 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = preparedStatementForFindNewsIDByAuthorName(connection, authorName);
+            PreparedStatement preparedStatement = preparedStatementForFindNewsIdByAuthorName(connection, authorName);
+            ResultSet rs = preparedStatement.executeQuery();
+            newsList = parseResultSet(rs);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (newsList.isEmpty()) return null;
+        return newsList;
+    }
+
+    @Override
+    public List<News> findByTagName(String tagName) {
+        List<News> newsList = new LinkedList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = preparedStatementForFindNewsIdByTagName(connection, tagName);
             ResultSet rs = preparedStatement.executeQuery();
             newsList = parseResultSet(rs);
             preparedStatement.close();

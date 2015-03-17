@@ -84,7 +84,7 @@ public abstract class AbstractOracleDAO<Item> {
         }
     }
 
-    public Item findByID(int id) {
+    public Item findById(int id) {
         List<Item> items = new LinkedList<>();
         Connection connection = null;
         try {

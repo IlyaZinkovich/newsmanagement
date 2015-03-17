@@ -9,6 +9,11 @@ public class NewsAuthor implements Identified {
     public NewsAuthor() {
     }
 
+    public NewsAuthor(int newsId, int authorId) {
+        this.newsId = newsId;
+        this.authorId = authorId;
+    }
+
     public int getId() {
         return id;
     }

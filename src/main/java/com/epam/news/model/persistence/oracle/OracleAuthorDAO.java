@@ -3,6 +3,7 @@ package com.epam.news.model.persistence.oracle;
 
 import com.epam.news.model.entity.Author;
 import com.epam.news.model.persistence.interfaces.AuthorDAO;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+@Component
 public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements AuthorDAO {
 
     private final String UPDATE_AUTHOR_QUERY = "UPDATE Author " +
@@ -21,6 +23,7 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
             " VALUES ?";
     private final String DELETE_AUTHOR_QUERY = "DELETE Author WHERE author_id = ?";
     private final String SELECT_AUTHOR_BY_ID_QUERY = "SELECT * FROM Author WHERE author_id = ?";
+    private final String SELECT_AUTHOR_BY_NAME_QUERY = "SELECT * FROM Author WHERE name = ?";
 
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, Author author) throws SQLException {
@@ -51,6 +54,12 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
         return preparedStatement;
     }
 
+    protected PreparedStatement prepareStatementForFindByName(Connection connection, String name) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_AUTHOR_BY_NAME_QUERY);
+        preparedStatement.setString(1, name);
+        return preparedStatement;
+    }
+
     @Override
     protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         throw new UnsupportedOperationException();
@@ -66,5 +75,28 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
             list.add(author);
         }
         return list;
+    }
+
+    @Override
+    public Author findByName(String name) {
+        List<Author> items = new LinkedList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = prepareStatementForFindByName(connection, name);
+            ResultSet rs = preparedStatement.executeQuery();
+            items = parseResultSet(rs);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (items.isEmpty()) return null;
+        return items.get(0);
     }
 }

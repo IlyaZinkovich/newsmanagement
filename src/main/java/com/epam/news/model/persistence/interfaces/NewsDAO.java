@@ -8,7 +8,8 @@ public interface NewsDAO {
     public void insert(News news);
     public void update(News news);
     public void delete(News news);
-    public News findByID(int id);
+    public News findById(int id);
     public List<News> findByAuthorName(String authorName);
+    public List<News> findByTagName(String tagName);
     public List<News> findAll();
 }
