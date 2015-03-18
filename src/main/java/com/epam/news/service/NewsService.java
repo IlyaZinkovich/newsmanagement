@@ -75,6 +75,7 @@ public class NewsService {
     public void addNews(News news, Author author, List<Tag> tags) {
         addNews(news);
         try {
+            news = newsDAO.findLastInserted();
             newsTagDAO.insert(tags, news.getId());
             newsAuthorDAO.insert(author.getName(), news.getId());
         } catch (DAOException e) {

@@ -13,4 +13,6 @@ public interface NewsTagDAO {
     public void insert(Map<String, Integer> tagNameNewsIdMap) throws DAOException;
     public void insert(List<Tag> tags, int newsId) throws DAOException;
     public void insert(List<NewsTag> newsTagList) throws DAOException;
+    public NewsTag findLastInserted();
+
 }

@@ -23,6 +23,9 @@ public class OracleNewsAuthorDAO extends AbstractOracleDAO<NewsAuthor> implement
     private final String INSERT_NEWS_AUTHOR = "INSERT INTO News_Author " +
             "(news_id, author_id)" +
             " VALUES (?, ?)";
+    private final String SELECT_LAST_INSERTED = "SELECT * FROM News_Author WHERE NEWS_AUTHOR_ID=(SELECT MAX(NEWS_AUTHOR_ID) from News_Author)";
+    private final String SELECT_NEWS_AUTHOR_BY_ID_QUERY = "SELECT * FROM News_Author WHERE news_author_id = ?";
+
 
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, NewsAuthor newsAuthor) throws SQLException {
@@ -44,12 +47,20 @@ public class OracleNewsAuthorDAO extends AbstractOracleDAO<NewsAuthor> implement
 
     @Override
     protected PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException {
-        throw new UnsupportedOperationException();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_AUTHOR_BY_ID_QUERY);
+        preparedStatement.setInt(1, id);
+        return preparedStatement;
     }
 
     @Override
     protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected PreparedStatement prepareStatementForFindLastInserted(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LAST_INSERTED);
+        return preparedStatement;
     }
 
     @Override

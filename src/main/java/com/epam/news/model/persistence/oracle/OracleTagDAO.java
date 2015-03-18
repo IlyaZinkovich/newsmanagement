@@ -17,12 +17,11 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     private final String UPDATE_TAG_QUERY = "UPDATE Tag " +
             "set tag_name = ? " +
             "WHERE tag_id = ?";
-    private final String INSERT_TAG_QUERY = "INSERT INTO Tag " +
-            "tag_name" +
-            " VALUES ?";
+    private final String INSERT_TAG_QUERY = "INSERT INTO TAG (TAG_NAME) VALUES (?)";
     private final String DELETE_TAG_QUERY = "DELETE Tag WHERE tag_id = ?";
     private final String SELECT_TAG_BY_ID_QUERY = "SELECT * FROM Tag WHERE tag_id = ?";
     private final String SELECT_TAG_BY_NAME_QUERY = "SELECT * FROM Tag WHERE tag_name = ?";
+    private final String SELECT_LAST_INSERTED = "SELECT * FROM Tag WHERE TAG_ID=(SELECT MAX(TAG_ID) from Tag)";
 
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, Tag tag) throws SQLException {
@@ -56,6 +55,12 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     @Override
     protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected PreparedStatement prepareStatementForFindLastInserted(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LAST_INSERTED);
+        return preparedStatement;
     }
 
     private PreparedStatement prepareStatementForFindByName(Connection connection, String name) throws SQLException {

@@ -15,4 +15,6 @@ public interface NewsDAO {
     public List<News> findByTag(String tagName);
     public List<News> findByTag(int tagId);
     public List<News> findAll();
+    public News findLastInserted();
+
 }

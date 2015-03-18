@@ -9,4 +9,6 @@ import com.epam.news.model.persistence.exception.DAOException;
 public interface NewsAuthorDAO {
     public void insert(NewsAuthor newsAuthor) throws DAOException;
     public void insert(String authorName, int newsId) throws DAOException;
+    public NewsAuthor findLastInserted();
+
 }

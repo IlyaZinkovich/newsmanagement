@@ -27,6 +27,8 @@ public class OracleCommentDAO extends AbstractOracleDAO<Comment> implements Comm
             " VALUES (?, ?, ?)";
     private final String DELETE_COMMENTS_QUERY = "DELETE Comments WHERE comment_id = ?";
     private final String SELECT_COMMENTS_BY_ID_QUERY = "SELECT * FROM Comments WHERE comment_id = ?";
+    private final String SELECT_LAST_INSERTED = "SELECT * FROM Comments WHERE COMMENT_ID=(SELECT MAX(COMMENT_ID) from Comments)";
+
 
 
     @Override
@@ -65,6 +67,12 @@ public class OracleCommentDAO extends AbstractOracleDAO<Comment> implements Comm
     @Override
     protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected PreparedStatement prepareStatementForFindLastInserted(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LAST_INSERTED);
+        return preparedStatement;
     }
 
     @Override

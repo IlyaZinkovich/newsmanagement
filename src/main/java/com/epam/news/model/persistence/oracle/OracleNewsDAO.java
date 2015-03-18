@@ -44,6 +44,7 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
             "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id" +
             "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id" +
             "WHERE Tag.tag_id = ?";
+    private final String SELECT_LAST_INSERTED = "SELECT * FROM News WHERE NEWS_ID=(SELECT MAX(NEWS_ID) from News)";
 
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, News news) throws SQLException {
@@ -85,6 +86,12 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
     @Override
     protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_NEWS_QUERY);
+        return preparedStatement;
+    }
+
+    @Override
+    protected PreparedStatement prepareStatementForFindLastInserted(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LAST_INSERTED);
         return preparedStatement;
     }
 

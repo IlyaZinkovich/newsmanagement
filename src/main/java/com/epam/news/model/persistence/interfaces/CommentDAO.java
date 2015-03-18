@@ -9,4 +9,6 @@ public interface CommentDAO {
     public void update(Comment comment);
     public void delete(Comment comment);
     public Comment findById(int id);
+    public Comment findLastInserted();
+
 }

@@ -19,11 +19,13 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
             "set name = ? " +
             "WHERE author_id = ?";
     private final String INSERT_AUTHOR_QUERY = "INSERT INTO Author " +
-            "name" +
-            " VALUES ?";
+            "(name)" +
+            " VALUES (?)";
     private final String DELETE_AUTHOR_QUERY = "DELETE Author WHERE author_id = ?";
     private final String SELECT_AUTHOR_BY_ID_QUERY = "SELECT * FROM Author WHERE author_id = ?";
     private final String SELECT_AUTHOR_BY_NAME_QUERY = "SELECT * FROM Author WHERE name = ?";
+    private final String SELECT_LAST_INSERTED = "SELECT * FROM Author WHERE AUTHOR_ID=(SELECT MAX(AUTHOR_ID) from Author)";
+
 
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, Author author) throws SQLException {
@@ -63,6 +65,12 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     @Override
     protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected PreparedStatement prepareStatementForFindLastInserted(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LAST_INSERTED);
+        return preparedStatement;
     }
 
     @Override

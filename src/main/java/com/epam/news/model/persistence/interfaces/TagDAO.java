@@ -10,4 +10,5 @@ public interface TagDAO {
     public void delete(Tag tag);
     public Tag findById(int id);
     public Tag findByName(String name);
+    public Tag findLastInserted();
 }

@@ -9,4 +9,6 @@ public interface AuthorDAO {
     public void delete(Author author);
     public Author findById(int author);
     public Author findByName(String name);
+    public Author findLastInserted();
+
 }

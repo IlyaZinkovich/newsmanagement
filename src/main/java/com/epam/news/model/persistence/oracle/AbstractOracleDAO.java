@@ -24,6 +24,7 @@ public abstract class AbstractOracleDAO<Item> {
     protected abstract PreparedStatement prepareStatementForDelete(Connection connection, Item item) throws SQLException;
     protected abstract PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException;
     protected abstract PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException;
+    protected abstract PreparedStatement prepareStatementForFindLastInserted(Connection connection) throws SQLException;
     protected abstract List<Item> parseResultSet(ResultSet resultSet) throws SQLException;
 
     public void insert(Item item) throws DAOException {
@@ -125,6 +126,28 @@ public abstract class AbstractOracleDAO<Item> {
             }
         }
         return items;
+    }
+
+    public Item findLastInserted() {
+        List<Item> items = new LinkedList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = prepareStatementForFindLastInserted(connection);
+            ResultSet rs = preparedStatement.executeQuery();
+            items = parseResultSet(rs);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (items.isEmpty()) return null;
+        return items.get(0);
     }
 
 }

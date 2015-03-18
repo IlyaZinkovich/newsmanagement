@@ -22,13 +22,11 @@ public class OracleNewsTagDAO extends AbstractOracleDAO<NewsTag> implements News
     @Autowired
     private OracleTagDAO oracleTagDAO;
 
-    private final String INSERT_NEWS_AUTHOR_WITH_AUTHOR_ID_QUERY = "INSERT INTO News_Author " +
-            "(news_id, author_id)" +
+    private final String INSERT_NEWS_TAG_QUERY = "INSERT INTO News_Tag " +
+            "(news_id, tag_id)" +
             " VALUES (?, ?)";
-    private final String INSERT_NEWS_AUTHOR_WITH_AUTHOR_NAME_QUERY = "INSERT INTO News_Author " +
-            "(news_id, author_id)" +
-            " VALUES (?, ?)";
-
+    private final String SELECT_NEWS_TAG_BY_ID_QUERY = "SELECT * FROM News_Tag WHERE news_tag_id = ?";
+    private final String SELECT_LAST_INSERTED = "SELECT * FROM News_Tag WHERE NEWS_TAG_ID=(SELECT MAX(NEWS_TAG_ID) from News_Tag)";
 
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, NewsTag newsTag) throws SQLException {
@@ -37,7 +35,7 @@ public class OracleNewsTagDAO extends AbstractOracleDAO<NewsTag> implements News
 
     @Override
     protected PreparedStatement prepareStatementForInsert(Connection connection, NewsTag newsTag) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEWS_AUTHOR_WITH_AUTHOR_ID_QUERY);
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEWS_TAG_QUERY);
         preparedStatement.setInt(1, newsTag.getNewsId());
         preparedStatement.setInt(2, newsTag.getTagId());
         return preparedStatement;
@@ -50,12 +48,20 @@ public class OracleNewsTagDAO extends AbstractOracleDAO<NewsTag> implements News
 
     @Override
     protected PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException {
-        throw new UnsupportedOperationException();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_TAG_BY_ID_QUERY);
+        preparedStatement.setInt(1, id);
+        return preparedStatement;
     }
 
     @Override
     protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected PreparedStatement prepareStatementForFindLastInserted(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LAST_INSERTED);
+        return preparedStatement;
     }
 
     @Override
