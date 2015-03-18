@@ -2,6 +2,7 @@ package com.epam.news.model.persistence.oracle;
 
 import com.epam.news.model.entity.NewsTag;
 import com.epam.news.model.entity.Tag;
+import com.epam.news.model.persistence.exception.DAOException;
 import com.epam.news.model.persistence.interfaces.NewsTagDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -71,7 +72,7 @@ public class OracleNewsTagDAO extends AbstractOracleDAO<NewsTag> implements News
     }
 
     @Override
-    public void insertNewsTagWithTagNameNewsId(String tagName, int newsId) {
+    public void insert(String tagName, int newsId) throws DAOException {
         Tag tag = new Tag();
         tag.setName(tagName);
         oracleTagDAO.insert(tag);
@@ -81,15 +82,22 @@ public class OracleNewsTagDAO extends AbstractOracleDAO<NewsTag> implements News
     }
 
     @Override
-    public void insertNewsTagWithTagNameNewsId(Map<String, Integer> tagNameNewsIdMap) {
+    public void insert(Map<String, Integer> tagNameNewsIdMap) throws DAOException {
         Set<String> tagNames = tagNameNewsIdMap.keySet();
         for (String tagName : tagNames) {
-            insertNewsTagWithTagNameNewsId(tagName, tagNameNewsIdMap.get(tagName));
+            insert(tagName, tagNameNewsIdMap.get(tagName));
         }
     }
 
     @Override
-    public void insert(List<NewsTag> newsTagList) {
+    public void insert(List<Tag> tags, int newsId) throws DAOException {
+        for (Tag tag : tags) {
+            insert(tag.getName(), newsId);
+        }
+    }
+
+    @Override
+    public void insert(List<NewsTag> newsTagList) throws DAOException {
         for (NewsTag newsTag : newsTagList) {
             insert(newsTag);
         }

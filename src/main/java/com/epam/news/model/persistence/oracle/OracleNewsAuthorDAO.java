@@ -2,6 +2,7 @@ package com.epam.news.model.persistence.oracle;
 
 import com.epam.news.model.entity.Author;
 import com.epam.news.model.entity.NewsAuthor;
+import com.epam.news.model.persistence.exception.DAOException;
 import com.epam.news.model.persistence.interfaces.NewsAuthorDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -65,7 +66,7 @@ public class OracleNewsAuthorDAO extends AbstractOracleDAO<NewsAuthor> implement
     }
 
 
-    public void insertNewsAuthorWithAuthorNameNewsId(String authorName, int newsId) {
+    public void insert(String authorName, int newsId) throws DAOException {
         Author author = new Author();
         author.setName(authorName);
         oracleAuthorDAO.insert(author);

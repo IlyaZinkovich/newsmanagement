@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class DBUnitConfig extends DBTestCase {
+
     protected IDatabaseTester tester;
     private Properties prop;
     protected IDataSet beforeData;

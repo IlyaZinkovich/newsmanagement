@@ -1,6 +1,7 @@
 package com.epam.news.model.persistence.oracle;
 
 import com.epam.news.model.entity.Identified;
+import com.epam.news.model.persistence.exception.DAOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,12 +26,12 @@ public abstract class AbstractOracleDAO<Item> {
     protected abstract PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException;
     protected abstract List<Item> parseResultSet(ResultSet resultSet) throws SQLException;
 
-    public void insert(Item item) {
+    public void insert(Item item) throws DAOException {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             PreparedStatement preparedStatement = prepareStatementForFindByID(connection, ((Identified) item).getId());
-            if (preparedStatement.executeQuery() != null)
+            if (preparedStatement.executeQuery().next())
                 preparedStatement = prepareStatementForUpdate(connection, item);
             else
                 preparedStatement = prepareStatementForInsert(connection, item);

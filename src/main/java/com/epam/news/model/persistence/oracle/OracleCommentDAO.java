@@ -2,17 +2,22 @@ package com.epam.news.model.persistence.oracle;
 
 
 import com.epam.news.model.entity.Comment;
-import com.epam.news.model.persistence.interfaces.CommentsDAO;
+import com.epam.news.model.persistence.exception.DAOException;
+import com.epam.news.model.persistence.exception.NewsWithThisIdDoesNotExistException;
+import com.epam.news.model.persistence.interfaces.CommentDAO;
+import com.epam.news.model.persistence.interfaces.NewsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class OracleCommentsDAO extends AbstractOracleDAO<Comment> implements CommentsDAO {
+public class OracleCommentDAO extends AbstractOracleDAO<Comment> implements CommentDAO {
+
+    @Autowired
+    private NewsDAO newsDAO;
 
     private final String UPDATE_COMMENTS_QUERY = "UPDATE Comments " +
             "set comment_text = ?, creation_date = ?, news_id = ? " +
@@ -60,6 +65,12 @@ public class OracleCommentsDAO extends AbstractOracleDAO<Comment> implements Com
     @Override
     protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void insert(Comment comment) throws DAOException {
+        if (newsDAO.findById(comment.getNewsId()) == null) throw new NewsWithThisIdDoesNotExistException();
+        super.insert(comment);
     }
 
     @Override
