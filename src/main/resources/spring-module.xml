@@ -6,9 +6,9 @@
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="com.epam.news" />
+    <context:component-scan base-package="com.epam.newsmanagement" />
 
-    <!--<bean id="newsDAO" class="com.epam.news.model.persistence.oracle.OracleNewsDAO" />-->
+    <!--<bean id="newsDAO" class="com.epam.newsmanagementmanagement.model.persistence.oracle.OracleNewsDAO" />-->
 
     <import resource="spring-datasource.xml" />
 
