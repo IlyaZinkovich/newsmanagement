@@ -1,10 +1,13 @@
 package com.epam.newsmanagement.model.entity;
 
 
+import java.util.Date;
+
 public class Author {
 
     private int id;
     private String name;
+    private Date expired;
 
     public Author() {
     }
@@ -27,5 +30,13 @@ public class Author {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getExpired() {
+        return expired;
+    }
+
+    public void setExpired(Date expired) {
+        this.expired = expired;
     }
 }

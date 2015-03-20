@@ -6,10 +6,8 @@ import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +23,9 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     private final String INSERT_NEWS_AUTHOR = "INSERT INTO News_Author " +
             "(news_id, author_id)" +
             " VALUES (?, ?)";
+    private final String UPDATE_EXPIRED_AUTHOR = "UPDATE Author " +
+            "set expired = ? " +
+            "WHERE author_id = ?";
     private final String DELETE_AUTHOR_QUERY = "DELETE Author WHERE author_id = ?";
     private final String SELECT_AUTHOR_BY_ID_QUERY = "SELECT * FROM Author WHERE author_id = ?";
     private final String SELECT_AUTHOR_BY_NAME_QUERY = "SELECT * FROM Author WHERE name = ?";
@@ -38,6 +39,13 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_AUTHOR_QUERY);
         preparedStatement.setString(1, author.getName());
         preparedStatement.setInt(2, author.getId());
+        return preparedStatement;
+    }
+
+    protected PreparedStatement prepareStatementForUpdateExpired(Connection connection, int authorId, Date expiredDate) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXPIRED_AUTHOR);
+        preparedStatement.setTimestamp(1, new Timestamp(expiredDate.getTime()));
+        preparedStatement.setInt(2, authorId);
         return preparedStatement;
     }
 
@@ -86,6 +94,8 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
             Author author = new Author();
             author.setId(resultSet.getInt("author_id"));
             author.setName(resultSet.getString("name"));
+            Timestamp expired = resultSet.getTimestamp("expired");
+            if (expired != null) author.setExpired(new Date(expired.getTime()));
             list.add(author);
         }
         return list;
@@ -142,6 +152,25 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
         int authorId = insert(author);
         insertNewsAuthor(newsId, authorId);
         return authorId;
+    }
+
+    @Override
+    public void update(int authorId, Date expirationDate) {
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = prepareStatementForUpdateExpired(connection, authorId, expirationDate);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private int insertNewsAuthor(int newsId, int authorId) {

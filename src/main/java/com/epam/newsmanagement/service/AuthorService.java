@@ -6,6 +6,8 @@ import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class AuthorService {
 
@@ -18,6 +20,10 @@ public class AuthorService {
         } catch (DAOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void makeExpired(int authorId, Date expirationDate) {
+        authorDAO.update(authorId, expirationDate);
     }
 
 }
