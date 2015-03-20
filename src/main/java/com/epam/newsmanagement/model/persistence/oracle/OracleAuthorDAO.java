@@ -28,6 +28,9 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     private final String DELETE_AUTHOR_QUERY = "DELETE Author WHERE author_id = ?";
     private final String SELECT_AUTHOR_BY_ID_QUERY = "SELECT * FROM Author WHERE author_id = ?";
     private final String SELECT_AUTHOR_BY_NAME_QUERY = "SELECT * FROM Author WHERE name = ?";
+    private final String SELECT_AUTHOR_BY_NEWS_ID_QUERY = "SELECT Author.author_id, Author.name FROM Author " +
+            "INNER JOIN News_Author on Author.author_id = News_Author.author_id " +
+            "WHERE news_id = ?";
 
 
     @Override
@@ -53,7 +56,7 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException {
+    protected PreparedStatement prepareStatementForFindById(Connection connection, int id) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_AUTHOR_BY_ID_QUERY);
         preparedStatement.setInt(1, id);
         return preparedStatement;
@@ -62,6 +65,12 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     protected PreparedStatement prepareStatementForFindByName(Connection connection, String name) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_AUTHOR_BY_NAME_QUERY);
         preparedStatement.setString(1, name);
+        return preparedStatement;
+    }
+
+    protected PreparedStatement prepareStatementForFindByNewsID(Connection connection, int newsId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_AUTHOR_BY_NEWS_ID_QUERY);
+        preparedStatement.setInt(1, newsId);
         return preparedStatement;
     }
 
@@ -80,6 +89,29 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
             list.add(author);
         }
         return list;
+    }
+
+    @Override
+    public Author findByNewsId(int newsId) {
+        List<Author> items = new LinkedList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = prepareStatementForFindByNewsID(connection, newsId);
+            ResultSet rs = preparedStatement.executeQuery();
+            items = parseResultSet(rs);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (items.isEmpty()) return null;
+        return items.get(0);
     }
 
     @Override
@@ -106,8 +138,7 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     }
 
     @Override
-    public int insert(String authorName, int newsId) throws DAOException {
-        Author author = new Author(authorName);
+    public int insert(Author author, int newsId) throws DAOException {
         int authorId = insert(author);
         insertNewsAuthor(newsId, authorId);
         return authorId;

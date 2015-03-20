@@ -7,7 +7,8 @@ import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import java.util.List;
 
 public interface TagDAO extends GenericDAO<Tag> {
-    public Tag findById(int id);
-    public Tag findByName(String name);
-    public void insert(List<String> tags, int newsId) throws DAOException;
+    Tag findById(int id);
+    List<Tag> findByNewsId(int newsId);
+    Tag findByName(String name);
+    void insert(List<Tag> tags, int newsId) throws DAOException;
 }

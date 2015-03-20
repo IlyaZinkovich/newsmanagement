@@ -1,13 +1,18 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
 
+import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import com.epam.newsmanagement.model.entity.News;
+import oracle.jdbc.OracleConnection;
+import oracle.sql.ARRAY;
+import oracle.sql.ArrayDescriptor;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
@@ -44,6 +49,14 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
             "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id" +
             "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id" +
             "WHERE Tag.tag_id = ?";
+
+    private final String FIND_NEWS_BY_TAGS_NAME_QUERY_BEGIN = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date, " +
+            "COUNT(Tag.TAG_ID) as NumerOfTags " +
+            "FROM News INNER JOIN News_Tag ON News_Tag.news_id = News.news_id " +
+            "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id " +
+            "WHERE Tag.tag_name in ";
+    private final String FIND_NEWS_BY_TAGS_NAME_QUERY_END = " GROUP BY News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date ORDER BY NumerOfTags DESC";
+
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, News news) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_NEWS_QUERY);
@@ -75,7 +88,7 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException {
+    protected PreparedStatement prepareStatementForFindById(Connection connection, int id) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_BY_ID_QUERY);
         preparedStatement.setInt(1, id);
         return preparedStatement;
@@ -103,25 +116,34 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
         return list;
     }
 
-    protected PreparedStatement preparedStatementForFindNewsIdByAuthorName(Connection connection, String authorName) throws SQLException{
+    protected PreparedStatement prepareStatementForFindNewsByAuthorName(Connection connection, String authorName) throws SQLException{
         PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_BY_AUTHOR_NAME_QUERY);
         preparedStatement.setString(1, authorName);
         return preparedStatement;
     }
 
-    protected PreparedStatement preparedStatementForFindNewsIdByAuthorId(Connection connection, int authorId) throws SQLException{
+    protected PreparedStatement prepareStatementForFindNewsIdByAuthorId(Connection connection, int authorId) throws SQLException{
         PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_BY_AUTHOR_ID_QUERY);
         preparedStatement.setInt(1, authorId);
         return preparedStatement;
     }
 
-    protected PreparedStatement preparedStatementForFindNewsIdByTagName(Connection connection, String tagName) throws SQLException{
+    protected PreparedStatement prepareStatementForFindNewsByTagName(Connection connection, String tagName) throws SQLException{
         PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_BY_TAG_NAME_QUERY);
         preparedStatement.setString(1, tagName);
         return preparedStatement;
     }
 
-    protected PreparedStatement preparedStatementForFindNewsIdByTagId(Connection connection, int tagId) throws SQLException{
+    protected PreparedStatement preparedStatementForFindNewsByTags(Connection connection, List<Tag> tags) throws SQLException{
+        String tagNames = tags.stream().map(t -> "'"+ t.getName() + "'").collect(Collectors.joining(", "));
+        PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_BY_TAGS_NAME_QUERY_BEGIN +
+        "(" + tagNames + ")" + FIND_NEWS_BY_TAGS_NAME_QUERY_END);
+        return preparedStatement;
+    }
+
+
+
+    protected PreparedStatement prepareStatementForFindNewsByTagId(Connection connection, int tagId) throws SQLException{
         PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_BY_TAG_ID_QUERY);
         preparedStatement.setInt(1, tagId);
         return preparedStatement;
@@ -134,7 +156,7 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = preparedStatementForFindNewsIdByAuthorName(connection, authorName);
+            PreparedStatement preparedStatement = prepareStatementForFindNewsByAuthorName(connection, authorName);
             ResultSet rs = preparedStatement.executeQuery();
             newsList = parseResultSet(rs);
             preparedStatement.close();
@@ -157,7 +179,7 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = preparedStatementForFindNewsIdByAuthorId(connection, authorId);
+            PreparedStatement preparedStatement = prepareStatementForFindNewsIdByAuthorId(connection, authorId);
             ResultSet rs = preparedStatement.executeQuery();
             newsList = parseResultSet(rs);
             preparedStatement.close();
@@ -180,7 +202,7 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = preparedStatementForFindNewsIdByTagName(connection, tagName);
+            PreparedStatement preparedStatement = prepareStatementForFindNewsByTagName(connection, tagName);
             ResultSet rs = preparedStatement.executeQuery();
             newsList = parseResultSet(rs);
             preparedStatement.close();
@@ -203,7 +225,7 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = preparedStatementForFindNewsIdByTagId(connection, tagId);
+            PreparedStatement preparedStatement = prepareStatementForFindNewsByTagId(connection, tagId);
             ResultSet rs = preparedStatement.executeQuery();
             newsList = parseResultSet(rs);
             preparedStatement.close();
@@ -217,6 +239,28 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
             }
         }
         if (newsList.isEmpty()) return null;
+        return newsList;
+    }
+
+    @Override
+    public List<News> findByTags(List<Tag> tags) {
+        List<News> newsList = new LinkedList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = preparedStatementForFindNewsByTags(connection, tags);
+            ResultSet rs = preparedStatement.executeQuery();
+            newsList = parseResultSet(rs);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         return newsList;
     }
 }

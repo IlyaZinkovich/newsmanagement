@@ -12,14 +12,8 @@ public class News {
     private String title;
     private Date creationDate;
     private Date modificationDate;
-    private List<Author> authors;
-    private List<Comment> comments;
-    private List<Tag> tags;
 
     public News() {
-        this.authors = new ArrayList<>();
-        this.comments = new ArrayList<>();
-        this.tags = new ArrayList<>();
     }
 
     public News(String shortText, String fullText, String title, Date creationDate, Date modificationDate) {
@@ -28,9 +22,6 @@ public class News {
         this.title = title;
         this.creationDate = creationDate;
         this.modificationDate = modificationDate;
-        this.authors = new ArrayList<>();
-        this.comments = new ArrayList<>();
-        this.tags = new ArrayList<>();
     }
 
     public int getId() {
@@ -81,30 +72,6 @@ public class News {
         this.modificationDate = modificationDate;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public List<Author> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
-
     @Override
     public String toString() {
         return "News{" +
@@ -114,9 +81,6 @@ public class News {
                 ", title='" + title + '\'' +
                 ", creationDate=" + creationDate +
                 ", modificationDate=" + modificationDate +
-                ", authors=" + authors +
-                ", comments=" + comments +
-                ", tags=" + tags +
                 '}';
     }
 }

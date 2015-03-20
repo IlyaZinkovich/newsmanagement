@@ -21,7 +21,7 @@ public abstract class AbstractOracleDAO<Item> {
     protected abstract PreparedStatement prepareStatementForUpdate(Connection connection, Item item) throws SQLException;
     protected abstract PreparedStatement prepareStatementForInsert(Connection connection, Item item) throws SQLException;
     protected abstract PreparedStatement prepareStatementForDelete(Connection connection, Item item) throws SQLException;
-    protected abstract PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException;
+    protected abstract PreparedStatement prepareStatementForFindById(Connection connection, int id) throws SQLException;
     protected abstract PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException;
     protected abstract List<Item> parseResultSet(ResultSet resultSet) throws SQLException;
 
@@ -90,7 +90,7 @@ public abstract class AbstractOracleDAO<Item> {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = prepareStatementForFindByID(connection, id);
+            PreparedStatement preparedStatement = prepareStatementForFindById(connection, id);
             ResultSet rs = preparedStatement.executeQuery();
             items = parseResultSet(rs);
             preparedStatement.close();

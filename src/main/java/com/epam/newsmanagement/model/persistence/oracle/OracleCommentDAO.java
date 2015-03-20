@@ -27,6 +27,7 @@ public class OracleCommentDAO extends AbstractOracleDAO<Comment> implements Comm
             " VALUES (?, ?, ?)";
     private final String DELETE_COMMENTS_QUERY = "DELETE Comments WHERE comment_id = ?";
     private final String SELECT_COMMENTS_BY_ID_QUERY = "SELECT * FROM Comments WHERE comment_id = ?";
+    private final String SELECT_COMMENTS_BY_NEWS_ID_QUERY = "SELECT * FROM Comments WHERE news_id = ?";
 
 
 
@@ -57,9 +58,15 @@ public class OracleCommentDAO extends AbstractOracleDAO<Comment> implements Comm
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException {
+    protected PreparedStatement prepareStatementForFindById(Connection connection, int id) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_COMMENTS_BY_ID_QUERY);
         preparedStatement.setInt(1, id);
+        return preparedStatement;
+    }
+
+    protected PreparedStatement prepareStatementForFindByNewsId(Connection connection, int newsId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_COMMENTS_BY_NEWS_ID_QUERY);
+        preparedStatement.setInt(1, newsId);
         return preparedStatement;
     }
 
@@ -72,6 +79,36 @@ public class OracleCommentDAO extends AbstractOracleDAO<Comment> implements Comm
     public int insert(Comment comment) throws DAOException {
         if (newsDAO.findById(comment.getNewsId()) == null) throw new NewsWithThisIdDoesNotExistException();
         return super.insert(comment);
+    }
+
+    @Override
+    public void insert(List<Comment> comments) throws DAOException {
+        for (Comment comment : comments) {
+            if (newsDAO.findById(comment.getNewsId()) == null) throw new NewsWithThisIdDoesNotExistException();
+            insert(comment);
+        }
+    }
+
+    @Override
+    public List<Comment> findByNewsId(int newsId) {
+        List<Comment> items = new LinkedList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = prepareStatementForFindById(connection, newsId);
+            ResultSet rs = preparedStatement.executeQuery();
+            items = parseResultSet(rs);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return items;
     }
 
     @Override

@@ -25,6 +25,9 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     private final String INSERT_NEWS_TAG_QUERY = "INSERT INTO News_Tag " +
             "(news_id, tag_id)" +
             " VALUES (?, ?)";
+    private final String SELECT_TAGS_BY_NEWS_ID_QUERY = "SELECT Tag.tag_id, Tag.tag_name FROM Tag " +
+            "INNER JOIN News_Tag on Tag.tag_id = News_Tag.news_id " +
+            "WHERE news_id = ?";
 
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, Tag tag) throws SQLException {
@@ -36,7 +39,7 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
 
     @Override
     protected PreparedStatement prepareStatementForInsert(Connection connection, Tag tag) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TAG_QUERY, new String[]{"comment_id"});
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TAG_QUERY, new String[]{"tag_id"});
         preparedStatement.setString(1, tag.getName());
         return preparedStatement;
     }
@@ -49,9 +52,15 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindByID(Connection connection, int id) throws SQLException {
+    protected PreparedStatement prepareStatementForFindById(Connection connection, int id) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TAG_BY_ID_QUERY);
         preparedStatement.setInt(1, id);
+        return preparedStatement;
+    }
+
+    protected PreparedStatement prepareStatementForFindByNewsID(Connection connection, int newsId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TAG_BY_ID_QUERY);
+        preparedStatement.setInt(1, newsId);
         return preparedStatement;
     }
 
@@ -79,6 +88,28 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     }
 
     @Override
+    public List<Tag> findByNewsId(int newsId) {
+        List<Tag> items = new LinkedList<>();
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = prepareStatementForFindByNewsID(connection, newsId);
+            ResultSet rs = preparedStatement.executeQuery();
+            items = parseResultSet(rs);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return items;
+    }
+
+    @Override
     public Tag findByName(String name) {
         List<Tag> items = new LinkedList<>();
         Connection connection = null;
@@ -102,25 +133,19 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     }
 
     @Override
-    public void insert(List<String> tagNames, int newsId) throws DAOException {
-        for (String tagName : tagNames) {
-            Tag tag = new Tag(tagName);
+    public void insert(List<Tag> tags, int newsId) throws DAOException {
+        for (Tag tag : tags) {
             int tagId = insert(tag);
             insertNewsTag(newsId, tagId);
         }
     }
 
-    private int insertNewsTag(int newsId, int tagId) {
+    private void insertNewsTag(int newsId, int tagId) {
         Connection connection = null;
-        int lastInsertId = 0;
         try {
             connection = dataSource.getConnection();
             PreparedStatement preparedStatement = prepareStatementForInsertIntoNewsTag(connection, newsId, tagId);
             preparedStatement.executeUpdate();
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet != null && resultSet.next()) {
-                lastInsertId = resultSet.getInt(1);
-            }
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,7 +156,6 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
                 e.printStackTrace();
             }
         }
-        return lastInsertId;
     }
 
     private PreparedStatement prepareStatementForInsertIntoNewsTag(Connection connection, int newsId, int tagId) throws SQLException {

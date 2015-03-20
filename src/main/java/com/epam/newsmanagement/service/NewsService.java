@@ -44,24 +44,19 @@ public class NewsService {
         return newsDAO.findAll();
     }
 
-    public News findById(int id) {
-        return newsDAO.findById(id);
+    public News findById(int newsId) {
+        return newsDAO.findById(newsId);
     }
 
     public List<News> findByAuthor(String authorName) {
         return newsDAO.findByAuthor(authorName);
     }
 
-    public List<News> findByAuthor(int authorId) {
-        return newsDAO.findByAuthor(authorId);
-    }
-
     public List<News> findByTag(String tagName) {
         return newsDAO.findByTag(tagName);
     }
 
-    public List<News> findByTag(int tagId) {
-        return newsDAO.findByTag(tagId);
+    public List<News> findByTags(List<Tag> tags) {
+        return newsDAO.findByTags(tags);
     }
-
 }
