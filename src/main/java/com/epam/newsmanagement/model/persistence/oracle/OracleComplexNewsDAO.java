@@ -60,7 +60,6 @@ public class OracleComplexNewsDAO extends AbstractOracleDAO<ComplexNews> impleme
     }
 
     @Override
-    @Transactional
     public int insert(ComplexNews complexNews) throws DAOException {
         int newsId = oracleNewsDAO.insert(complexNews.getNews());
         oracleAuthorDAO.insert(complexNews.getAuthor(), newsId);

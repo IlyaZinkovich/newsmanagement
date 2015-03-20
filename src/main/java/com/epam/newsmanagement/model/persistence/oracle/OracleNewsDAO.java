@@ -1,17 +1,14 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
 
+import com.epam.newsmanagement.model.entity.News;
 import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
-import com.epam.newsmanagement.model.entity.News;
-import oracle.jdbc.OracleConnection;
-import oracle.sql.ARRAY;
-import oracle.sql.ArrayDescriptor;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
-import java.sql.Date;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component

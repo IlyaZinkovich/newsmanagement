@@ -20,11 +20,11 @@ public class MainController {
 
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("spring-module.xml");
-        NewsManagementService newsManagementService = (NewsManagementService) context.getBean("newsManagementService");
-        List<Tag> tags = new LinkedList<>();
-        tags.add(new Tag("second tag"));
-        tags.add(new Tag("first tag"));
-        tags.add(new Tag("fifth tag"));
-        newsManagementService.findNewsByTags(tags).forEach(System.out::println);
+//        NewsManagementService newsManagementService = (NewsManagementService) context.getBean("newsManagementService");
+//        List<Tag> tags = new LinkedList<>();
+//        tags.add(new Tag("second tag"));
+//        tags.add(new Tag("first tag"));
+//        tags.add(new Tag("fifth tag"));
+//        newsManagementService.findNewsByTags(tags).forEach(System.out::println);
     }
 }
