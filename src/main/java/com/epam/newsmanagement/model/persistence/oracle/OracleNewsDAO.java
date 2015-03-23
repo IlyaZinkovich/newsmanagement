@@ -10,6 +10,7 @@ import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
@@ -132,13 +133,13 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
     }
 
     protected PreparedStatement preparedStatementForFindNewsByTags(Connection connection, List<Tag> tags) throws SQLException{
-        String tagNames = tags.stream().map(t -> "'"+ t.getName() + "'").collect(Collectors.joining(", "));
-        PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_BY_TAGS_NAME_QUERY_BEGIN +
-        "(" + tagNames + ")" + FIND_NEWS_BY_TAGS_NAME_QUERY_END);
+        String tagNames = tags.stream().map(t -> "?").collect(Collectors.joining(", "));
+        String query = FIND_NEWS_BY_TAGS_NAME_QUERY_BEGIN +
+                "(" + tagNames + ")" + FIND_NEWS_BY_TAGS_NAME_QUERY_END;
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        for (int i = 0; i < tags.size(); i++) preparedStatement.setString(i + 1, tags.get(i).getName());
         return preparedStatement;
     }
-
-
 
     protected PreparedStatement prepareStatementForFindNewsByTagId(Connection connection, int tagId) throws SQLException{
         PreparedStatement preparedStatement = connection.prepareStatement(FIND_NEWS_BY_TAG_ID_QUERY);
