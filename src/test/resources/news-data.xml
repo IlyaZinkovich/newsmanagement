@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <NEWS short_text="firstShort" full_text="firstFull" title="firstTitle"
+          creation_date="2015-03-15 10:55:55" modification_date="2015-03-15"/>
+    <NEWS short_text="secondShort" full_text="secondFull" title="secondTitle"
+          creation_date="2015-01-30 10:55:55" modification_date="2015-01-30"/>
+    <NEWS short_text="thirdShort" full_text="thirdFull" title="thirdTitle"
+          creation_date="2015-02-23 10:55:55" modification_date="2015-02-23"/>
+</dataset>

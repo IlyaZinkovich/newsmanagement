@@ -31,7 +31,7 @@ public class OracleRoleDAO extends AbstractOracleDAO<Role> implements RoleDAO {
 
     @Override
     protected PreparedStatement prepareStatementForInsert(Connection connection, Role role) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ROLE_QUERY);
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ROLE_QUERY, new String[]{"user_id"});
         preparedStatement.setString(1, role.getName());
         return preparedStatement;
     }

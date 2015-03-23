@@ -43,7 +43,7 @@ public class OracleUserDAO extends AbstractOracleDAO<User> implements UserDAO {
 
     @Override
     protected PreparedStatement prepareStatementForInsert(Connection connection, User user) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY);
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_QUERY, new String[]{"user_id"});
         preparedStatement.setString(1, user.getName());
         preparedStatement.setString(2, user.getLogin());
         preparedStatement.setString(3, user.getPassword());
