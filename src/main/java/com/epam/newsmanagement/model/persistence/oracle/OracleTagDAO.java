@@ -20,13 +20,14 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
             "WHERE tag_id = ?";
     private final String INSERT_TAG_QUERY = "INSERT INTO TAG (TAG_NAME) VALUES (?)";
     private final String DELETE_TAG_QUERY = "DELETE Tag WHERE tag_id = ?";
+    private final String SELECT_ALL_TAGS_QUERY = "SELECT * FROM Tag";
     private final String SELECT_TAG_BY_ID_QUERY = "SELECT * FROM Tag WHERE tag_id = ?";
     private final String SELECT_TAG_BY_NAME_QUERY = "SELECT * FROM Tag WHERE tag_name = ?";
     private final String INSERT_NEWS_TAG_QUERY = "INSERT INTO News_Tag " +
             "(news_id, tag_id)" +
             " VALUES (?, ?)";
     private final String SELECT_TAGS_BY_NEWS_ID_QUERY = "SELECT Tag.tag_id, Tag.tag_name FROM Tag " +
-            "INNER JOIN News_Tag on Tag.tag_id = News_Tag.news_id " +
+            "INNER JOIN News_Tag on Tag.tag_id = News_Tag.tag_id " +
             "WHERE news_id = ?";
 
     @Override
@@ -58,15 +59,16 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
         return preparedStatement;
     }
 
-    protected PreparedStatement prepareStatementForFindByNewsID(Connection connection, int newsId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TAG_BY_ID_QUERY);
+    protected PreparedStatement prepareStatementForFindByNewsId(Connection connection, int newsId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TAGS_BY_NEWS_ID_QUERY);
         preparedStatement.setInt(1, newsId);
         return preparedStatement;
     }
 
     @Override
     protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
-        throw new UnsupportedOperationException();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_TAGS_QUERY);
+        return preparedStatement;
     }
 
     private PreparedStatement prepareStatementForFindByName(Connection connection, String name) throws SQLException {
@@ -93,7 +95,7 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = prepareStatementForFindByNewsID(connection, newsId);
+            PreparedStatement preparedStatement = prepareStatementForFindByNewsId(connection, newsId);
             ResultSet rs = preparedStatement.executeQuery();
             items = parseResultSet(rs);
             preparedStatement.close();

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <NEWS_USER user_id="1" user_name="first" login="FirstLogin" password="12345"/>
-    <NEWS_USER user_id="2" user_name="second" login="SecondLogin" password="67890"/>
+    <NEWS_USER user_name="first" login="FirstLogin" password="12345"/>
+    <NEWS_USER user_name="second" login="SecondLogin" password="67890"/>
 </dataset>

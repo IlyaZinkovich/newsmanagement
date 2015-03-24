@@ -1,5 +1,8 @@
 package com.epam.newsmanagement.model.entity;
 
+import com.epam.newsmanagement.model.persistence.exception.DAOException;
+import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
+import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.UserDAO;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -13,7 +16,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import java.util.List;
+import java.util.Date;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -24,17 +27,22 @@ import static org.junit.Assert.assertThat;
         DirtiesContextTestExecutionListener.class,
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
-@DatabaseSetup("classpath:user-data.xml")
-public class UserTest {
+@DatabaseSetup("classpath:author-data.xml")
+public class AuthorTest {
 
     @Autowired
-    private UserDAO userDAO;
+    private AuthorDAO authorDAO;
+
+    @Autowired
+    private NewsDAO newsDAO;
 
     @Test
-    public void search() {
-        List<User> users = userDAO.findAll();
-        User user = userDAO.findById(users.get(0).getId());
-        assertThat(user, notNullValue());
+    public void addAuthor() throws DAOException {
+        Author author = new Author("testAuthorName");
+        News news = new News("testShort", "testFull", "testTitle", new Date(), new Date());
+        int authorId = authorDAO.insert(author, news);
+        assertThat(authorDAO.findById(authorId), notNullValue());
+        assertThat(newsDAO.findByAuthor(authorId), notNullValue());
     }
 
 }

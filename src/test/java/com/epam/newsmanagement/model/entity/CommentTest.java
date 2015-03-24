@@ -1,6 +1,9 @@
 package com.epam.newsmanagement.model.entity;
 
-import com.epam.newsmanagement.model.persistence.interfaces.UserDAO;
+import com.epam.newsmanagement.model.persistence.exception.DAOException;
+import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
+import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
+import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
@@ -13,6 +16,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -24,17 +29,31 @@ import static org.junit.Assert.assertThat;
         DirtiesContextTestExecutionListener.class,
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
-@DatabaseSetup("classpath:user-data.xml")
-public class UserTest {
+@DatabaseSetup("classpath:comment-data.xml")
+public class CommentTest {
 
     @Autowired
-    private UserDAO userDAO;
+    private CommentDAO commentDAO;
+
+    @Autowired
+    private NewsDAO newsDAO;
 
     @Test
-    public void search() {
-        List<User> users = userDAO.findAll();
-        User user = userDAO.findById(users.get(0).getId());
-        assertThat(user, notNullValue());
+    public void addComment() throws DAOException {
+        News news = newsDAO.findAll().get(0);
+        Comment comment = new Comment("testCommetn", new Date(), news.getId());
+        int commentId = commentDAO.insert(comment);
+        Comment foundByIdComment = commentDAO.findById(commentId);
+        assertThat(foundByIdComment, notNullValue());
+        assertThat(foundByIdComment.getNewsId(), is(news.getId()));
+    }
+
+    @Test
+    public void deleteComment() throws DAOException {
+        Comment comment = commentDAO.findAll().get(0);
+        int commentId = comment.getId();
+        commentDAO.delete(comment);
+        assertThat(commentDAO.findById(commentId), nullValue());
     }
 
 }

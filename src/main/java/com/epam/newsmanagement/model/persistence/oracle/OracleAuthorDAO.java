@@ -2,8 +2,11 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 
 import com.epam.newsmanagement.model.entity.Author;
+import com.epam.newsmanagement.model.entity.News;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
+import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -14,12 +17,15 @@ import java.util.List;
 @Component
 public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements AuthorDAO {
 
+    @Autowired
+    private NewsDAO newsDAO;
+
     private final String UPDATE_AUTHOR_QUERY = "UPDATE Author " +
             "set name = ? " +
             "WHERE author_id = ?";
     private final String INSERT_AUTHOR_QUERY = "INSERT INTO Author " +
             "(name)" +
-            " VALUES (?) returning author_id into author_id";
+            " VALUES (?)";
     private final String INSERT_NEWS_AUTHOR = "INSERT INTO News_Author " +
             "(news_id, author_id)" +
             " VALUES (?, ?)";
@@ -51,7 +57,7 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
 
     @Override
     protected PreparedStatement prepareStatementForInsert(Connection connection, Author author) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AUTHOR_QUERY, new String[]{"author_id"});
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AUTHOR_QUERY, new String[]{"AUTHOR_ID"});
         preparedStatement.setString(1, author.getName());
         return preparedStatement;
     }
@@ -155,6 +161,14 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     }
 
     @Override
+    public int insert(Author author, News news) throws DAOException {
+        int newsId = newsDAO.insert(news);
+        int authorId = insert(author);
+        insertNewsAuthor(newsId, authorId);
+        return authorId;
+    }
+
+    @Override
     public void update(int authorId, Date expirationDate) {
         Connection connection = null;
         try {
@@ -198,7 +212,7 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     }
 
     private PreparedStatement prepareStatementForInsertIntoNewsAuthor(Connection connection, int newsId, int authorId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEWS_AUTHOR);
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEWS_AUTHOR, new String[]{"AUTHOR_ID"});
         preparedStatement.setInt(1, newsId);
         preparedStatement.setInt(2, authorId);
         return preparedStatement;

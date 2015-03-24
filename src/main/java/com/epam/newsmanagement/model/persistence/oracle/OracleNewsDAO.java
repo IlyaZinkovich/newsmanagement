@@ -32,11 +32,11 @@ public class OracleNewsDAO extends AbstractOracleDAO<News> implements NewsDAO {
             "INNER JOIN News_author ON News_author.news_id = News.news_id" +
             "INNER JOIN Author ON Author.author_id = News_author.AUTHOR_ID" +
             "WHERE Author.name = ?";
-    private final String FIND_NEWS_BY_AUTHOR_ID_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date " +
-            "FROM News" +
-            "INNER JOIN News_author ON News_author.news_id = News.news_id" +
-            "INNER JOIN Author ON Author.author_id = News_author.AUTHOR_ID" +
-            "WHERE Author.id = ?";
+    private final String FIND_NEWS_BY_AUTHOR_ID_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date, Author.author_id \n" +
+            "FROM News " +
+            "INNER JOIN News_author ON News_author.news_id = News.news_id " +
+            "INNER JOIN Author ON Author.author_id = News_author.AUTHOR_ID " +
+            "WHERE Author.AUTHOR_ID=?";
     private final String FIND_NEWS_BY_TAG_NAME_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date " +
             "FROM News" +
             "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id" +

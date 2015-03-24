@@ -1,6 +1,8 @@
 package com.epam.newsmanagement.model.entity;
 
-import com.epam.newsmanagement.model.persistence.interfaces.UserDAO;
+import com.epam.newsmanagement.model.persistence.exception.DAOException;
+import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
+import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -24,17 +27,23 @@ import static org.junit.Assert.assertThat;
         DirtiesContextTestExecutionListener.class,
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
-@DatabaseSetup("classpath:user-data.xml")
-public class UserTest {
+@DatabaseSetup("classpath:tags-data.xml")
+public class TagsTest {
 
     @Autowired
-    private UserDAO userDAO;
+    private NewsDAO newsDAO;
+
+    @Autowired
+    private TagDAO tagDAO;
 
     @Test
-    public void search() {
-        List<User> users = userDAO.findAll();
-        User user = userDAO.findById(users.get(0).getId());
-        assertThat(user, notNullValue());
+    public void addTags() throws DAOException {
+        News news = newsDAO.findAll().get(0);
+        List<Tag> initialTags = tagDAO.findByNewsId(news.getId());
+        for (Tag t : initialTags) tagDAO.delete(t);
+        List<Tag> tags = tagDAO.findAll();
+        tagDAO.insert(tags, news.getId());
+        List<Tag> foundTags = tagDAO.findByNewsId(news.getId());
+        assertThat(foundTags.size(), is(tags.size()));
     }
-
 }

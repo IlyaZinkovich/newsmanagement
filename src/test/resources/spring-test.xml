@@ -42,7 +42,7 @@
         </property>
     </bean>
 
-    <context:component-scan base-package="com.epam.newsmanagement" />
+    <context:component-scan base-package="com.epam.newsmanagement.model.persistence" />
 
     <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
         <!--<property name="driverClassName" value="${db.driver}" />-->
