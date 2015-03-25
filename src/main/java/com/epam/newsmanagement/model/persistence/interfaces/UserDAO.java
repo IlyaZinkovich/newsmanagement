@@ -6,5 +6,4 @@ import com.epam.newsmanagement.model.persistence.exception.DAOException;
 
 public interface UserDAO extends GenericDAO<User> {
     User findById(int userId);
-    int insert(User user, Role role) throws DAOException;
 }

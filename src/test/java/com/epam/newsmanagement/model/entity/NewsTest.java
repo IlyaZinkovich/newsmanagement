@@ -19,8 +19,10 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -104,16 +106,27 @@ public class NewsTest {
         int newsId = newsDAO.findAll().get(0).getId();
         News news = newsDAO.findById(newsId);
         assertThat(news, notNullValue());
+        assertThat(news.getId(), is(newsId));
     }
 
     @Test
     public void findByTags() throws DAOException {
         News news = newsDAO.findAll().get(0);
         List<Tag> tags = tagDAO.findAll();
-        tagDAO.insert(tags, news.getId());
+        newsDAO.insertNewsTags(news.getId(), tags.stream().mapToInt(Tag::getId).boxed().collect(Collectors.toList()));
         List<News> foundByTagsNews = newsDAO.findByTags(tags);
         assertThat(foundByTagsNews, notNullValue());
         assertThat(foundByTagsNews.size(), is(1));
+    }
+
+    @Test
+    public void addComment() throws DAOException {
+        News news = newsDAO.findAll().get(0);
+        Comment comment = new Comment("testComment", new Date(), news.getId());
+        int commentId = commentDAO.insert(comment);
+        Comment foundByIdComment = commentDAO.findById(commentId);
+        assertThat(foundByIdComment, notNullValue());
+        assertThat(foundByIdComment.getNewsId(), is(news.getId()));
     }
 
 }

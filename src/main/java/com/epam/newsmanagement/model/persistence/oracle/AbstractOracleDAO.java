@@ -2,6 +2,7 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -29,7 +30,7 @@ public abstract class AbstractOracleDAO<Item> {
         Connection connection = null;
         int lastInsertId = 0;
         try {
-            connection = dataSource.getConnection();
+            connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForInsert(connection, item);
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
@@ -52,7 +53,7 @@ public abstract class AbstractOracleDAO<Item> {
     public void update(Item item) {
         Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForUpdate(connection, item);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -70,7 +71,7 @@ public abstract class AbstractOracleDAO<Item> {
     public void delete(Item item) {
         Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForDelete(connection, item);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -89,7 +90,7 @@ public abstract class AbstractOracleDAO<Item> {
         List<Item> items = new LinkedList<>();
         Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForFindById(connection, id);
             ResultSet rs = preparedStatement.executeQuery();
             items = parseResultSet(rs);
@@ -111,7 +112,7 @@ public abstract class AbstractOracleDAO<Item> {
         List<Item> items = new LinkedList<>();
         Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForFindAll(connection);
             ResultSet rs = preparedStatement.executeQuery();
             items = parseResultSet(rs);

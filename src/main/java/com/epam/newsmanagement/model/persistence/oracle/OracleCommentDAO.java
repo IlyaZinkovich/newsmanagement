@@ -7,6 +7,7 @@ import com.epam.newsmanagement.model.persistence.exception.NewsWithThisIdDoesNot
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -96,7 +97,7 @@ public class OracleCommentDAO extends AbstractOracleDAO<Comment> implements Comm
         List<Comment> items = new LinkedList<>();
         Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForFindById(connection, newsId);
             ResultSet rs = preparedStatement.executeQuery();
             items = parseResultSet(rs);

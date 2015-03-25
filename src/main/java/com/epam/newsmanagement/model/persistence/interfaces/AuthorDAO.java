@@ -10,9 +10,5 @@ public interface AuthorDAO extends GenericDAO<Author> {
     Author findById(int author);
     Author findByNewsId(int newsId);
     Author findByName(String name);
-    int insert(Author author, int newsId) throws DAOException;
-
-    int insert(Author author, News news) throws DAOException;
-
     void update(int authorId, Date expirationDate);
 }

@@ -5,7 +5,7 @@ public class NewsWithThisIdDoesNotExistException extends DAOException {
 
     }
 
-    public NewsWithThisIdDoesNotExistException(String message, Throwable cause) {
-        super(message, cause);
+    public NewsWithThisIdDoesNotExistException(Throwable cause) {
+        super(cause);
     }
 }

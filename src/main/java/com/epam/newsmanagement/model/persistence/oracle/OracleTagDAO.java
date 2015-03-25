@@ -3,6 +3,7 @@ package com.epam.newsmanagement.model.persistence.oracle;
 import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -23,9 +24,6 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     private final String SELECT_ALL_TAGS_QUERY = "SELECT * FROM Tag";
     private final String SELECT_TAG_BY_ID_QUERY = "SELECT * FROM Tag WHERE tag_id = ?";
     private final String SELECT_TAG_BY_NAME_QUERY = "SELECT * FROM Tag WHERE tag_name = ?";
-    private final String INSERT_NEWS_TAG_QUERY = "INSERT INTO News_Tag " +
-            "(news_id, tag_id)" +
-            " VALUES (?, ?)";
     private final String SELECT_TAGS_BY_NEWS_ID_QUERY = "SELECT Tag.tag_id, Tag.tag_name FROM Tag " +
             "INNER JOIN News_Tag on Tag.tag_id = News_Tag.tag_id " +
             "WHERE news_id = ?";
@@ -90,11 +88,21 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     }
 
     @Override
+    public List<Integer> insert(List<Tag> tags) throws DAOException {
+        List<Integer> idList = new LinkedList<>();
+        for (Tag t : tags) {
+            int tagId = insert(t);
+            idList.add(tagId);
+        }
+        return idList;
+    }
+
+    @Override
     public List<Tag> findByNewsId(int newsId) {
         List<Tag> items = new LinkedList<>();
         Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForFindByNewsId(connection, newsId);
             ResultSet rs = preparedStatement.executeQuery();
             items = parseResultSet(rs);
@@ -116,7 +124,7 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
         List<Tag> items = new LinkedList<>();
         Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForFindByName(connection, name);
             ResultSet rs = preparedStatement.executeQuery();
             items = parseResultSet(rs);
@@ -132,39 +140,6 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
         }
         if (items.isEmpty()) return null;
         return items.get(0);
-    }
-
-    @Override
-    public void insert(List<Tag> tags, int newsId) throws DAOException {
-        for (Tag tag : tags) {
-            int tagId = insert(tag);
-            insertNewsTag(newsId, tagId);
-        }
-    }
-
-    private void insertNewsTag(int newsId, int tagId) {
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = prepareStatementForInsertIntoNewsTag(connection, newsId, tagId);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private PreparedStatement prepareStatementForInsertIntoNewsTag(Connection connection, int newsId, int tagId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_NEWS_TAG_QUERY);
-        preparedStatement.setInt(1, newsId);
-        preparedStatement.setInt(2, tagId);
-        return preparedStatement;
     }
 
 }

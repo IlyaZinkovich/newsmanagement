@@ -28,9 +28,6 @@ public class OracleUserDAO extends AbstractOracleDAO<User> implements UserDAO {
     private final String SELECT_USER_BY_ID_QUERY = "SELECT * FROM News_User WHERE user_id = ?";
     private final String SELECT_ALL_USERS_QUERY = "SELECT * FROM News_User";
 
-    @Autowired
-    private RoleDAO roleDAO;
-
     @Override
     protected PreparedStatement prepareStatementForUpdate(Connection connection, User user) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_QUERY);
@@ -69,14 +66,6 @@ public class OracleUserDAO extends AbstractOracleDAO<User> implements UserDAO {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS_QUERY);
         return preparedStatement;
     }
-
-    public int insert(User user, Role role) throws DAOException {
-        int userId = insert(user);
-        role.setUserId(userId);
-        roleDAO.insert(role);
-        return userId;
-    }
-
 
     @Override
     protected List<User> parseResultSet(ResultSet resultSet) throws SQLException {

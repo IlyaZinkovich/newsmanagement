@@ -1,12 +1,12 @@
 package com.epam.newsmanagement.model.persistence.exception;
 
-import com.epam.newsmanagement.exception.NewsException;
+import com.epam.newsmanagement.exception.NewsManagementException;
 
-public class DAOException extends NewsException {
+public class DAOException extends NewsManagementException {
     public DAOException() {
     }
 
-    public DAOException(String message, Throwable cause) {
-        super(message, cause);
+    public DAOException(Throwable cause) {
+        super(cause);
     }
 }
