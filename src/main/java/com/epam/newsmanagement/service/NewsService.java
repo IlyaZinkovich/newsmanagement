@@ -138,4 +138,13 @@ public class NewsService {
         }
     }
 
+    public NewsService(NewsDAO newsDAO, AuthorDAO authorDAO, TagDAO tagDAO, CommentDAO commentDAO) {
+        this.newsDAO = newsDAO;
+        this.authorDAO = authorDAO;
+        this.tagDAO = tagDAO;
+        this.commentDAO = commentDAO;
+    }
+
+    public NewsService() {
+    }
 }
