@@ -3,7 +3,6 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.entity.Comment;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.model.persistence.exception.NewsWithThisIdDoesNotExistException;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,15 +78,8 @@ public class OracleCommentDAO extends AbstractOracleDAO<Comment> implements Comm
     }
 
     @Override
-    public int insert(Comment comment) throws DAOException {
-        if (newsDAO.findById(comment.getNewsId()) == null) throw new NewsWithThisIdDoesNotExistException();
-        return super.insert(comment);
-    }
-
-    @Override
     public void insert(List<Comment> comments) throws DAOException {
         for (Comment comment : comments) {
-            if (newsDAO.findById(comment.getNewsId()) == null) throw new NewsWithThisIdDoesNotExistException();
             insert(comment);
         }
     }

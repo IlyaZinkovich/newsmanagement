@@ -27,9 +27,6 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     private final String INSERT_AUTHOR_QUERY = "INSERT INTO Author " +
             "(name)" +
             " VALUES (?)";
-    private final String INSERT_NEWS_AUTHOR = "INSERT INTO News_Author " +
-            "(news_id, author_id)" +
-            " VALUES (?, ?)";
     private final String UPDATE_EXPIRED_AUTHOR = "UPDATE Author " +
             "set expired = ? " +
             "WHERE author_id = ?";

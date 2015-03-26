@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import static com.epam.newsmanagement.model.persistence.oracle.PersistenceConstants.NULL_ID;
 
 @Component
 public abstract class AbstractOracleDAO<Item> {
@@ -87,6 +88,7 @@ public abstract class AbstractOracleDAO<Item> {
     }
 
     public Item findById(int id) {
+        if (id == NULL_ID) return null;
         List<Item> items = new LinkedList<>();
         Connection connection = null;
         try {

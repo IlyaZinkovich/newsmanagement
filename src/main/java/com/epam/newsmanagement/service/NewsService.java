@@ -6,6 +6,8 @@ import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
+import com.epam.newsmanagement.service.exception.NewsAlreadyExistsException;
+import com.epam.newsmanagement.service.exception.NewsDoesNotExistException;
 import com.epam.newsmanagement.service.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,9 @@ public class NewsService {
 
     public void addNews(News news) throws ServiceException {
         try {
-            int newsId = newsDAO.insert(news);
+            if (newsDAO.findById(news.getId()) == null)
+                newsDAO.insert(news);
+            else throw new NewsAlreadyExistsException();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -39,7 +43,9 @@ public class NewsService {
 
     public void editNews(News news) throws ServiceException {
         try {
-            newsDAO.update(news);
+            if (newsDAO.findById(news.getId()) != null)
+                newsDAO.update(news);
+            else throw new NewsDoesNotExistException();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -47,7 +53,9 @@ public class NewsService {
 
     public void deleteNews(News news) throws ServiceException {
         try {
-            newsDAO.delete(news);
+            if (newsDAO.findById(news.getId()) != null)
+                newsDAO.delete(news);
+            else throw new NewsDoesNotExistException();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -56,8 +64,10 @@ public class NewsService {
     @Transactional(rollbackFor = ServiceException.class)
     public void addNewsAuthor(int newsId, Author author) throws ServiceException {
         try {
-            int authorId = authorDAO.insert(author);
-            newsDAO.insertNewsAuthor(newsId, authorId);
+            if (newsDAO.findById(newsId) != null) {
+                int authorId = authorDAO.insert(author);
+                newsDAO.insertNewsAuthor(newsId, authorId);
+            } else throw new NewsDoesNotExistException();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -112,7 +122,9 @@ public class NewsService {
 
     public void addComment(Comment comment) throws ServiceException {
         try {
-            commentDAO.insert(comment);
+            if (newsDAO.findById(comment.getNewsId()) != null)
+                commentDAO.insert(comment);
+            else throw new NewsDoesNotExistException();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
