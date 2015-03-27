@@ -152,6 +152,13 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     }
 
     @Override
+    public int insert(Author author) throws DAOException {
+        Author foundAuthor = findByName(author.getName());
+        if (foundAuthor != null) return foundAuthor.getId();
+        return super.insert(author);
+    }
+
+    @Override
     public void update(int authorId, Date expirationDate) {
         Connection connection = null;
         try {

@@ -6,18 +6,15 @@ import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
-import com.epam.newsmanagement.service.exception.NewsAlreadyExistsException;
-import com.epam.newsmanagement.service.exception.NewsDoesNotExistException;
 import com.epam.newsmanagement.service.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
-public class NewsService {
+public class NewsManagementService {
 
     @Autowired
     private NewsDAO newsDAO;
@@ -33,9 +30,7 @@ public class NewsService {
 
     public void addNews(News news) throws ServiceException {
         try {
-            if (newsDAO.findById(news.getId()) == null)
-                newsDAO.insert(news);
-            else throw new NewsAlreadyExistsException();
+            newsDAO.insert(news);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -45,7 +40,6 @@ public class NewsService {
         try {
             if (newsDAO.findById(news.getId()) != null)
                 newsDAO.update(news);
-            else throw new NewsDoesNotExistException();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -55,7 +49,6 @@ public class NewsService {
         try {
             if (newsDAO.findById(news.getId()) != null)
                 newsDAO.delete(news);
-            else throw new NewsDoesNotExistException();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -67,7 +60,7 @@ public class NewsService {
             if (newsDAO.findById(newsId) != null) {
                 int authorId = authorDAO.insert(author);
                 newsDAO.insertNewsAuthor(newsId, authorId);
-            } else throw new NewsDoesNotExistException();
+            }
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -76,8 +69,22 @@ public class NewsService {
     @Transactional(rollbackFor = ServiceException.class)
     public void addNewsTags(int newsId, List<Tag> tags) throws ServiceException {
         try {
-            List<Integer> tagIdList = tagDAO.insert(tags);
-            newsDAO.insertNewsTags(newsId, tagIdList);
+            if (newsDAO.findById(newsId) != null) {
+                List<Integer> tagIdList = tagDAO.insert(tags);
+                newsDAO.insertNewsTags(newsId, tagIdList);
+            }
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Transactional(rollbackFor = ServiceException.class)
+    public void addNewsTag(int newsId, Tag tag) throws ServiceException {
+        try {
+            if (newsDAO.findById(newsId) != null) {
+                int tagId = tagDAO.insert(tag);
+                newsDAO.insertNewsTag(newsId, tagId);
+            }
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -124,7 +131,6 @@ public class NewsService {
         try {
             if (newsDAO.findById(comment.getNewsId()) != null)
                 commentDAO.insert(comment);
-            else throw new NewsDoesNotExistException();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -132,19 +138,20 @@ public class NewsService {
 
     public void deleteComment(Comment comment) throws ServiceException {
         try {
-            commentDAO.delete(comment);
+            if (commentDAO.findById(comment.getId()) != null)
+                commentDAO.delete(comment);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
     }
 
-    public NewsService(NewsDAO newsDAO, AuthorDAO authorDAO, TagDAO tagDAO, CommentDAO commentDAO) {
+    public NewsManagementService(NewsDAO newsDAO, AuthorDAO authorDAO, TagDAO tagDAO, CommentDAO commentDAO) {
         this.newsDAO = newsDAO;
         this.authorDAO = authorDAO;
         this.tagDAO = tagDAO;
         this.commentDAO = commentDAO;
     }
 
-    public NewsService() {
+    public NewsManagementService() {
     }
 }

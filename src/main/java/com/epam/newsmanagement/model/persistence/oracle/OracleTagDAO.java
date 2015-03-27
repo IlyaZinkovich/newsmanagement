@@ -98,6 +98,13 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     }
 
     @Override
+    public int insert(Tag tag) throws DAOException {
+        Tag foundTag = findByName(tag.getName());
+        if (foundTag != null) return foundTag.getId();
+        return super.insert(tag);
+    }
+
+    @Override
     public List<Tag> findByNewsId(int newsId) {
         List<Tag> items = new LinkedList<>();
         Connection connection = null;
