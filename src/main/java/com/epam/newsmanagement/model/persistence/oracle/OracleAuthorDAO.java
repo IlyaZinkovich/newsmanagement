@@ -22,18 +22,18 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     private NewsDAO newsDAO;
 
     private final String UPDATE_AUTHOR_QUERY = "UPDATE Author " +
-            "set name = ? " +
+            "set author_name = ? " +
             "WHERE author_id = ?";
     private final String INSERT_AUTHOR_QUERY = "INSERT INTO Author " +
-            "(name)" +
+            "(author_name)" +
             " VALUES (?)";
     private final String UPDATE_EXPIRED_AUTHOR = "UPDATE Author " +
             "set expired = ? " +
             "WHERE author_id = ?";
     private final String DELETE_AUTHOR_QUERY = "DELETE Author WHERE author_id = ?";
     private final String SELECT_AUTHOR_BY_ID_QUERY = "SELECT * FROM Author WHERE author_id = ?";
-    private final String SELECT_AUTHOR_BY_NAME_QUERY = "SELECT * FROM Author WHERE name = ?";
-    private final String SELECT_AUTHOR_BY_NEWS_ID_QUERY = "SELECT Author.author_id, Author.name FROM Author " +
+    private final String SELECT_AUTHOR_BY_NAME_QUERY = "SELECT * FROM Author WHERE author_name = ?";
+    private final String SELECT_AUTHOR_BY_NEWS_ID_QUERY = "SELECT Author.author_id, Author.author_name FROM Author " +
             "INNER JOIN News_Author on Author.author_id = News_Author.author_id " +
             "WHERE news_id = ?";
 
@@ -97,7 +97,7 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
         while (resultSet.next()) {
             Author author = new Author();
             author.setId(resultSet.getInt("author_id"));
-            author.setName(resultSet.getString("name"));
+            author.setName(resultSet.getString("author_name"));
             Timestamp expired = resultSet.getTimestamp("expired");
             if (expired != null) author.setExpired(new Date(expired.getTime()));
             list.add(author);

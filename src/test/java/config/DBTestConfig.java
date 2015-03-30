@@ -15,8 +15,6 @@ import javax.sql.DataSource;
 public class DBTestConfig {
 
     @Autowired
-    private Environment environment;
-    @Autowired
     private DataSource dataSource;
     @Autowired
     private OracleDataTypeFactory oracleDataTypeFactory;

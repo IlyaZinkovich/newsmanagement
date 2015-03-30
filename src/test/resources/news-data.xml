@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <NEWS short_text="firstShort" full_text="firstFull" title="firstTitle"
+    <NEWS news_id="1" short_text="firstShort" full_text="firstFull" title="firstTitle"
           creation_date="2015-03-15 10:55:55" modification_date="2015-03-15"/>
-    <NEWS short_text="secondShort" full_text="secondFull" title="secondTitle"
+    <NEWS news_id="2" short_text="secondShort" full_text="secondFull" title="secondTitle"
           creation_date="2015-01-30 10:55:55" modification_date="2015-01-30"/>
-    <NEWS short_text="thirdShort" full_text="thirdFull" title="thirdTitle"
+    <NEWS news_id="3" short_text="thirdShort" full_text="thirdFull" title="thirdTitle"
           creation_date="2015-02-23 10:55:55" modification_date="2015-02-23"/>
+    <TAG tag_id="1" tag_name="first"/>
+    <TAG tag_id="2" tag_name="second"/>
+    <TAG tag_id="3" tag_name="third"/>
+    <NEWS_TAG news_id="1" tag_id="1"/>
+    <NEWS_TAG news_id="2" tag_id="2"/>
+    <NEWS_TAG news_id="3" tag_id="3"/>
+    <NEWS_TAG news_id="1" tag_id="1"/>
+    <NEWS_TAG news_id="1" tag_id="1"/>
+    <NEWS_TAG news_id="2" tag_id="2"/>
+    <AUTHOR author_id="1" AUTHOR_NAME="John" />
+    <AUTHOR author_id="2" AUTHOR_NAME="Bill" />
+    <NEWS_AUTHOR news_id="1" author_id="1"/>
+    <NEWS_AUTHOR news_id="2" author_id="1"/>
+    <NEWS_AUTHOR news_id="3" author_id="2"/>
+    <COMMENTS comment_id="1" news_id="1" comment_text="first" creation_date="2015-01-30 10:55:55"/>
+    <COMMENTS comment_id="2" news_id="2" comment_text="second" creation_date="2015-02-10 10:55:55"/>
+    <COMMENTS comment_id="3" news_id="2" comment_text="third" creation_date="2015-01-12 10:55:55"/>
+    <COMMENTS comment_id="4" news_id="3" comment_text="fourth" creation_date="2015-07-12 10:55:55"/>
+    <COMMENTS comment_id="5" news_id="3" comment_text="fifth" creation_date="2015-03-03 10:55:55"/>
+    <COMMENTS comment_id="6" news_id="3" comment_text="sixth" creation_date="2015-11-11 10:55:55"/>
 </dataset>
