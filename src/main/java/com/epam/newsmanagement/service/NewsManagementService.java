@@ -1,11 +1,6 @@
 package com.epam.newsmanagement.service;
 
 import com.epam.newsmanagement.model.entity.*;
-import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
-import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
-import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
-import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,139 +12,101 @@ import java.util.List;
 public class NewsManagementService {
 
     @Autowired
-    private NewsDAO newsDAO;
+    private NewsService newsService;
 
     @Autowired
-    private AuthorDAO authorDAO;
+    private AuthorService authorService;
 
     @Autowired
-    private TagDAO tagDAO;
+    private TagService tagService;
 
     @Autowired
-    private CommentDAO commentDAO;
+    private CommentService commentService;
 
     public void addNews(News news) throws ServiceException {
-        try {
-            newsDAO.insert(news);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
+        newsService.addNews(news);
     }
 
     public void editNews(News news) throws ServiceException {
-        try {
-            if (newsDAO.findById(news.getId()) != null)
-                newsDAO.update(news);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
+        newsService.editNews(news);
     }
 
     public void deleteNews(News news) throws ServiceException {
-        try {
-            if (newsDAO.findById(news.getId()) != null)
-                newsDAO.delete(news);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
+        newsService.deleteNews(news);
     }
 
     @Transactional(rollbackFor = ServiceException.class)
     public void addNewsAuthor(int newsId, Author author) throws ServiceException {
-        try {
-            if (newsDAO.findById(newsId) != null) {
-                int authorId = authorDAO.insert(author);
-                newsDAO.insertNewsAuthor(newsId, authorId);
-            }
-        } catch (DAOException e) {
-            throw new ServiceException(e);
+        if (newsService.findById(newsId) != null) {
+            int authorId = authorService.addAuthor(author);
+            newsService.addNewsAuthor(newsId, authorId);
         }
     }
 
     @Transactional(rollbackFor = ServiceException.class)
     public void addNewsTags(int newsId, List<Tag> tags) throws ServiceException {
-        try {
-            if (newsDAO.findById(newsId) != null) {
-                List<Integer> tagIdList = tagDAO.insert(tags);
-                newsDAO.insertNewsTags(newsId, tagIdList);
-            }
-        } catch (DAOException e) {
-            throw new ServiceException(e);
+        if (newsService.findById(newsId) != null) {
+            List<Integer> tagIdList = tagService.addTags(tags);
+            newsService.addNewsTags(newsId, tagIdList);
         }
     }
 
     @Transactional(rollbackFor = ServiceException.class)
     public void addNewsTag(int newsId, Tag tag) throws ServiceException {
-        try {
-            if (newsDAO.findById(newsId) != null) {
-                int tagId = tagDAO.insert(tag);
-                newsDAO.insertNewsTag(newsId, tagId);
-            }
-        } catch (DAOException e) {
-            throw new ServiceException(e);
+        if (newsService.findById(newsId) != null) {
+            int tagId = tagService.addTag(tag);
+            newsService.addNewsTag(newsId, tagId);
         }
     }
 
     @Transactional(rollbackFor = ServiceException.class)
     public void addComplexNews(News news, Author author, List<Tag> tags) throws ServiceException {
-        try {
-            int newsId = newsDAO.insert(news);
-            int authorId = authorDAO.insert(author);
-            newsDAO.insertNewsAuthor(newsId, authorId);
-            List<Integer> tagIdList =  tagDAO.insert(tags);
-            for (int tagId : tagIdList) newsDAO.insertNewsTag(newsId, tagId);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
+        int newsId = newsService.addNews(news);
+        int authorId = authorService.addAuthor(author);
+        newsService.addNewsAuthor(newsId, authorId);
+        List<Integer> tagIdList =  tagService.addTags(tags);
+        newsService.addNewsTags(newsId, tagIdList);
     }
 
-    public List<News> findAll() {
-        return newsDAO.findAll();
+    public List<News> findAllNews() {
+        return newsService.findAll();
     }
 
-    public List<News> findByAuthor(String authorName) {
-        return newsDAO.findByAuthor(authorName);
+    public List<News> findNewsByAuthor(String authorName) {
+        return newsService.findByAuthor(authorName);
     }
 
-    public List<News> findByTag(String tagName) {
-        return newsDAO.findByTag(tagName);
+    public List<News> findNewsByTag(String tagName) {
+        return newsService.findByTag(tagName);
     }
 
-    public List<News> findByTags(List<Tag> tags) {
-        return newsDAO.findByTags(tags);
+    public List<News> findNewsByTags(List<Tag> tags) {
+        return newsService.findByTags(tags);
     }
 
     public ComplexNews findComplexNewsById(int newsId) {
-        News news = newsDAO.findById(newsId);
-        Author author = authorDAO.findByNewsId(newsId);
-        List<Tag> tags = tagDAO.findByNewsId(newsId);
-        List<Comment> comments = commentDAO.findByNewsId(newsId);
+        News news = newsService.findById(newsId);
+        Author author = authorService.findByNewsId(newsId);
+        List<Tag> tags = tagService.findByNewsId(newsId);
+        List<Comment> comments = commentService.findByNewsId(newsId);
         return new ComplexNews(news, author, tags, comments);
     }
 
     public void addComment(Comment comment) throws ServiceException {
-        try {
-            if (newsDAO.findById(comment.getNewsId()) != null)
-                commentDAO.insert(comment);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
+        if (newsService.findById(comment.getNewsId()) != null)
+            commentService.addComment(comment);
     }
 
     public void deleteComment(Comment comment) throws ServiceException {
-        try {
-            if (commentDAO.findById(comment.getId()) != null)
-                commentDAO.delete(comment);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
+        if (commentService.findById(comment.getId()) != null)
+            commentService.delete(comment);
     }
 
-    public NewsManagementService(NewsDAO newsDAO, AuthorDAO authorDAO, TagDAO tagDAO, CommentDAO commentDAO) {
-        this.newsDAO = newsDAO;
-        this.authorDAO = authorDAO;
-        this.tagDAO = tagDAO;
-        this.commentDAO = commentDAO;
+    public NewsManagementService(NewsService newsService, AuthorService authorService, TagService tagService, CommentService commentService) {
+        this.newsService = newsService;
+        this.authorService = authorService;
+        this.tagService = tagService;
+        this.commentService = commentService;
     }
 
     public NewsManagementService() {
