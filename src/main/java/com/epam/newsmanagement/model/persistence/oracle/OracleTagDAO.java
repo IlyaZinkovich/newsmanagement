@@ -2,6 +2,7 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
+import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -17,7 +18,7 @@ import java.util.List;
 import static com.epam.newsmanagement.model.persistence.oracle.PersistenceConstants.TAG_ID;
 
 @Component
-public class OracleTagDAO implements TagDAO {
+public class OracleTagDAO implements TagDAO, DAOHelper<Tag> {
 
     @Autowired
     private GenericDAOUtil<Tag> daoUtil;
@@ -26,7 +27,7 @@ public class OracleTagDAO implements TagDAO {
     private DataSource dataSource;
 
     private final String UPDATE_TAG_QUERY = "UPDATE Tag " +
-            "set tag_name = ? " +
+            "SET tag_name = ? " +
             "WHERE tag_id = ?";
     private final String INSERT_TAG_QUERY = "INSERT INTO TAG (TAG_NAME) VALUES (?)";
     private final String DELETE_TAG_QUERY = "DELETE Tag WHERE tag_id = ?";
@@ -107,7 +108,7 @@ public class OracleTagDAO implements TagDAO {
     }
 
     @Override
-    public Tag findById(long id) {
+    public Tag findById(long id) throws DAOException {
         return daoUtil.findById(id, this);
     }
 
@@ -129,7 +130,7 @@ public class OracleTagDAO implements TagDAO {
     }
 
     @Override
-    public List<Tag> findAll() {
+    public List<Tag> findAll() throws DAOException {
         return daoUtil.findAll(this);
     }
 

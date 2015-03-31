@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TagDAO extends GenericDAO<Tag> {
     List<Long> insert(List<Tag> tags) throws DAOException;
-    Tag findById(long id);
+    Tag findById(long id) throws DAOException;
     List<Tag> findByNewsId(long newsId);
     Tag findByName(String name);
 }

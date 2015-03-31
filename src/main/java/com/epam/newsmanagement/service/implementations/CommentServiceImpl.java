@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment findById(long commentId) {
+    public Comment findById(long commentId) throws DAOException {
         return commentDAO.findById(commentId);
     }
 

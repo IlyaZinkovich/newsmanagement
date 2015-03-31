@@ -2,6 +2,7 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.entity.Role;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
+import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.RoleDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class OracleRoleDAO implements RoleDAO {
+public class OracleRoleDAO implements RoleDAO, DAOHelper<Role> {
 
     @Autowired
     private GenericDAOUtil<Role> daoUtil;
@@ -24,7 +25,7 @@ public class OracleRoleDAO implements RoleDAO {
     private DataSource dataSource;
 
     private final String UPDATE_ROLE_QUERY = "UPDATE Role " +
-            "set role_name = ? " +
+            "SET role_name = ? " +
             "WHERE user_id = ?";
     private final String INSERT_ROLE_QUERY = "INSERT INTO Role (role_name) VALUES (?)";
     private final String DELETE_ROLE_QUERY = "DELETE Role WHERE role_id = ?";
@@ -93,7 +94,7 @@ public class OracleRoleDAO implements RoleDAO {
     }
 
     @Override
-    public List<Role> findAll() {
+    public List<Role> findAll() throws DAOException {
         return daoUtil.findAll(this);
     }
 

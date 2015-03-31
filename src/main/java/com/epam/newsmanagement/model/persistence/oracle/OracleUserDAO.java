@@ -2,6 +2,7 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.entity.User;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
+import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ import java.util.List;
 import static com.epam.newsmanagement.model.persistence.oracle.PersistenceConstants.USER_ID;
 
 @Component
-public class OracleUserDAO implements UserDAO {
+public class OracleUserDAO implements UserDAO, DAOHelper<User> {
 
     @Autowired
     private GenericDAOUtil<User> daoUtil;
@@ -33,7 +34,8 @@ public class OracleUserDAO implements UserDAO {
     private final String DELETE_USER_QUERY = "DELETE News_User WHERE user_id = ?";
     private final String SELECT_USER_BY_ID_QUERY = "SELECT User.user_id, User.user_name, User.login, User.password " +
             "FROM News_User WHERE user_id = ?";
-    private final String SELECT_ALL_USERS_QUERY = "SELECT User.user_id, User.user_name, User.login, User.password  FROM News_User";
+    private final String SELECT_ALL_USERS_QUERY = "SELECT User.user_id, User.user_name, User.login, User.password " +
+            "FROM News_User";
 
     @Override
     public PreparedStatement prepareStatementForUpdate(Connection connection, User user) throws SQLException {
@@ -104,7 +106,7 @@ public class OracleUserDAO implements UserDAO {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAll() throws DAOException {
         return daoUtil.findAll(this);
     }
 
@@ -114,7 +116,7 @@ public class OracleUserDAO implements UserDAO {
     }
 
     @Override
-    public User findById(long userId) {
+    public User findById(long userId) throws DAOException {
         return daoUtil.findById(userId, this);
     }
 }

@@ -1,7 +1,7 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.model.persistence.interfaces.GenericDAO;
+import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ public class GenericDAOUtil<Item> {
         this.dataSource = dataSource;
     }
 
-    public long insert(Item item, GenericDAO dao) throws DAOException {
+    public long insert(Item item, DAOHelper<Item> dao) throws DAOException {
         Connection connection = null;
         long lastInsertId = 0;
         ResultSet resultSet = null;
@@ -47,7 +47,7 @@ public class GenericDAOUtil<Item> {
             }
             preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(e);
         } finally {
             try {
                 if (resultSet != null) resultSet.close();
@@ -59,7 +59,7 @@ public class GenericDAOUtil<Item> {
         return lastInsertId;
     }
 
-    public void update(Item item, GenericDAO dao) {
+    public void update(Item item, DAOHelper<Item> dao) throws DAOException {
         Connection connection = null;
         try {
             connection = DataSourceUtils.getConnection(dataSource);
@@ -67,7 +67,7 @@ public class GenericDAOUtil<Item> {
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(e);
         } finally {
             if (connection != null) try {
                 connection.close();
@@ -77,7 +77,7 @@ public class GenericDAOUtil<Item> {
         }
     }
 
-    public void delete(Item item, GenericDAO dao) {
+    public void delete(Item item, DAOHelper<Item> dao) throws DAOException {
         Connection connection = null;
         try {
             connection = DataSourceUtils.getConnection(dataSource);
@@ -85,7 +85,7 @@ public class GenericDAOUtil<Item> {
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(e);
         } finally {
             if (connection != null) try {
                 connection.close();
@@ -95,7 +95,7 @@ public class GenericDAOUtil<Item> {
         }
     }
 
-    public Item findById(long id, GenericDAO dao) {
+    public Item findById(long id, DAOHelper<Item> dao) throws DAOException {
         if (id == NULL_ID) return null;
         List<Item> items = new LinkedList<>();
         Connection connection = null;
@@ -107,7 +107,7 @@ public class GenericDAOUtil<Item> {
             items = dao.parseResultSet(resultSet);
             preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(e);
         } finally {
             try {
                 if (resultSet != null) resultSet.close();
@@ -120,7 +120,7 @@ public class GenericDAOUtil<Item> {
         return items.get(0);
     }
 
-    public List<Item> findAll(GenericDAO dao) {
+    public List<Item> findAll(DAOHelper<Item> dao) throws DAOException {
         List<Item> items = new LinkedList<>();
         Connection connection = null;
         ResultSet resultSet = null;
@@ -131,16 +131,19 @@ public class GenericDAOUtil<Item> {
             items = dao.parseResultSet(resultSet);
             preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(e);
         } finally {
             try {
-                if (resultSet != null) resultSet.close();
                 if (connection != null) connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+        try {
+            if (resultSet != null) resultSet.close();
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
         return items;
     }
-
 }

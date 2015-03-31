@@ -54,7 +54,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public News findById(long newsId) {
+    public News findById(long newsId) throws DAOException {
         return newsDAO.findById(newsId);
     }
 
@@ -79,7 +79,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public List<News> findAll() {
+    public List<News> findAll() throws DAOException {
         return newsDAO.findAll();
     }
 

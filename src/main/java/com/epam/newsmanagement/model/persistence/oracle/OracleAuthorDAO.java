@@ -4,6 +4,7 @@ package com.epam.newsmanagement.model.persistence.oracle;
 import com.epam.newsmanagement.model.entity.Author;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
+import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ import java.util.List;
 import static com.epam.newsmanagement.model.persistence.oracle.PersistenceConstants.AUTHOR_ID;
 
 @Component
-public class OracleAuthorDAO implements AuthorDAO {
+public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
 
     @Autowired
     private GenericDAOUtil<Author> daoUtil;
@@ -181,7 +182,7 @@ public class OracleAuthorDAO implements AuthorDAO {
     }
 
     @Override
-    public List<Author> findAll() {
+    public List<Author> findAll() throws DAOException {
         return daoUtil.findAll(this);
     }
 

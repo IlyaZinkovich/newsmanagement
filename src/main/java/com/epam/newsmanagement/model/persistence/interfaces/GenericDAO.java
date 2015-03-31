@@ -13,12 +13,5 @@ public interface GenericDAO<T> {
     long insert(T item) throws DAOException;
     void update(T item) throws DAOException;
     void delete(T item) throws DAOException;
-    List<T> findAll();
-    PreparedStatement prepareStatementForUpdate(Connection connection, T item) throws SQLException;
-    PreparedStatement prepareStatementForInsert(Connection connection, T item) throws SQLException;
-    PreparedStatement prepareStatementForDelete(Connection connection, T item) throws SQLException;
-    PreparedStatement prepareStatementForFindById(Connection connection, long id) throws SQLException;
-    PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException;
-    List<T> parseResultSet(ResultSet resultSet) throws SQLException;
-    DataSource getDataSource();
+    List<T> findAll() throws DAOException;
 }

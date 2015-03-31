@@ -2,6 +2,7 @@ package com.epam.newsmanagement.service.interfaces;
 
 import com.epam.newsmanagement.model.entity.News;
 import com.epam.newsmanagement.model.entity.Tag;
+import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.service.exception.ServiceException;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface NewsService {
 
     void deleteNews(News news) throws ServiceException;
 
-    News findById(long newsId);
+    News findById(long newsId) throws DAOException;
 
     void addNewsAuthor(long newsId, long authorId);
 
@@ -24,7 +25,7 @@ public interface NewsService {
 
     List<News> findNewsByTags(List<Tag> tags);
 
-    List<News> findAll();
+    List<News> findAll() throws DAOException;
 
     List<News> findByAuthor(String authorName);
 

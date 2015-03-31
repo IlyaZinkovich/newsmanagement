@@ -4,6 +4,7 @@ package com.epam.newsmanagement.model.persistence.oracle;
 import com.epam.newsmanagement.model.entity.News;
 import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
+import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 import static com.epam.newsmanagement.model.persistence.oracle.PersistenceConstants.NEWS_ID;
 
 @Component
-public class OracleNewsDAO implements NewsDAO {
+public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
 
     @Autowired
     private DataSource dataSource;
@@ -35,41 +36,51 @@ public class OracleNewsDAO implements NewsDAO {
             "(news_id, tag_id)" +
             " VALUES (?, ?)";
     private final String UPDATE_NEWS_QUERY = "UPDATE News " +
-        "set short_text = ?, full_text = ?, title = ?, creation_date = ?, modification_date = ?" +
+        "SET short_text = ?, full_text = ?, title = ?, creation_date = ?, modification_date = ?" +
         "WHERE news_id = ?";
     private final String DELETE_NEWS_QUERY = "DELETE News WHERE news_id = ?";
-    private final String SELECT_ALL_NEWS_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date,COUNT(Comments.comment_id) AS NumberOfComments FROM News " +
+    private final String SELECT_ALL_NEWS_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, " +
+            "News.creation_date, News.modification_date,COUNT(Comments.comment_id) AS NumberOfComments " +
+            "FROM News " +
             "LEFT JOIN Comments " +
             "ON Comments.news_id=News.news_id " +
-            "GROUP BY News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date ORDER BY NumberOfComments DESC";
+            "GROUP BY News.news_id, News.short_text, News.full_text, News.title, News.creation_date, " +
+            "News.modification_date ORDER BY NumberOfComments DESC";
     private final String SELECT_NEWS_BY_ID_QUERY = "SELECT * FROM News WHERE news_id = ?";
-    private final String FIND_NEWS_BY_AUTHOR_NAME_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date " +
+    private final String FIND_NEWS_BY_AUTHOR_NAME_QUERY = "SELECT News.news_id, News.short_text, News.full_text, " +
+            "News.title, News.creation_date, News.modification_date " +
             "FROM News" +
             "INNER JOIN News_author ON News_author.news_id = News.news_id" +
             "INNER JOIN Author ON Author.author_id = News_author.AUTHOR_ID" +
             "WHERE Author.name = ?";
-    private final String FIND_NEWS_BY_AUTHOR_ID_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date, Author.author_id \n" +
+    private final String FIND_NEWS_BY_AUTHOR_ID_QUERY = "SELECT News.news_id, News.short_text, News.full_text, " +
+            "News.title, News.creation_date, News.modification_date, Author.author_id " +
             "FROM News " +
             "INNER JOIN News_author ON News_author.news_id = News.news_id " +
             "INNER JOIN Author ON Author.author_id = News_author.AUTHOR_ID " +
             "WHERE Author.AUTHOR_ID=?";
-    private final String FIND_NEWS_BY_TAG_NAME_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date " +
+    private final String FIND_NEWS_BY_TAG_NAME_QUERY = "SELECT News.news_id, News.short_text, News.full_text, " +
+            "News.title, News.creation_date, News.modification_date " +
             "FROM News" +
             "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id" +
             "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id" +
             "WHERE Tag.tag_name = ?";
-    private final String FIND_NEWS_BY_TAG_ID_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date " +
+    private final String FIND_NEWS_BY_TAG_ID_QUERY = "SELECT News.news_id, News.short_text, News.full_text, " +
+            "News.title, News.creation_date, News.modification_date " +
             "FROM News" +
             "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id" +
             "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id" +
             "WHERE Tag.tag_id = ?";
 
-    private final String FIND_NEWS_BY_TAGS_NAME_QUERY_BEGIN = "SELECT News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date, " +
+    private final String FIND_NEWS_BY_TAGS_NAME_QUERY_BEGIN = "SELECT News.news_id, News.short_text, " +
+            "News.full_text, News.title, News.creation_date, News.modification_date, " +
             "COUNT(Tag.TAG_ID) as NumerOfTags " +
             "FROM News INNER JOIN News_Tag ON News_Tag.news_id = News.news_id " +
             "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id " +
             "WHERE Tag.tag_name in ";
-    private final String FIND_NEWS_BY_TAGS_NAME_QUERY_END = " GROUP BY News.news_id, News.short_text, News.full_text, News.title, News.creation_date, News.modification_date ORDER BY NumerOfTags DESC";
+    private final String FIND_NEWS_BY_TAGS_NAME_QUERY_END = " GROUP BY News.news_id, News.short_text, " +
+            "News.full_text, News.title, News.creation_date, News.modification_date " +
+            "ORDER BY NumerOfTags DESC";
 
     @Override
     public PreparedStatement prepareStatementForUpdate(Connection connection, News news) throws SQLException {
@@ -221,7 +232,7 @@ public class OracleNewsDAO implements NewsDAO {
     }
 
     @Override
-    public News findById(long id) {
+    public News findById(long id) throws DAOException {
         return daoUtil.findById(id, this);
     }
 
@@ -341,7 +352,7 @@ public class OracleNewsDAO implements NewsDAO {
     }
 
     @Override
-    public List<News> findAll() {
+    public List<News> findAll() throws DAOException {
         return daoUtil.findAll(this);
     }
 

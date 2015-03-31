@@ -4,6 +4,7 @@ package com.epam.newsmanagement.model.persistence.oracle;
 import com.epam.newsmanagement.model.entity.Comment;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
+import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -16,7 +17,7 @@ import java.util.List;
 import static com.epam.newsmanagement.model.persistence.oracle.PersistenceConstants.COMMENT_ID;
 
 @Component
-public class OracleCommentDAO implements CommentDAO {
+public class OracleCommentDAO implements CommentDAO, DAOHelper<Comment> {
 
     @Autowired
     private GenericDAOUtil<Comment> daoUtil;
@@ -28,7 +29,7 @@ public class OracleCommentDAO implements CommentDAO {
     private NewsDAO newsDAO;
 
     private final String UPDATE_COMMENTS_QUERY = "UPDATE Comments " +
-            "set comment_text = ?, creation_date = ?, news_id = ? " +
+            "SET comment_text = ?, creation_date = ?, news_id = ? " +
             "WHERE comment_id = ?";
     private final String INSERT_COMMENTS_QUERY = "INSERT INTO Comments " +
             "(comment_text, creation_date, news_id)" +
@@ -105,12 +106,12 @@ public class OracleCommentDAO implements CommentDAO {
     }
 
     @Override
-    public List<Comment> findAll() {
+    public List<Comment> findAll() throws DAOException {
         return daoUtil.findAll(this);
     }
 
     @Override
-    public Comment findById(long id) {
+    public Comment findById(long id) throws DAOException {
         return daoUtil.findById(id, this);
     }
 

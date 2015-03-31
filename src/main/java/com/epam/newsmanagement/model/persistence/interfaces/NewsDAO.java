@@ -10,11 +10,11 @@ public interface NewsDAO extends GenericDAO<News> {
     void insertNewsAuthor(long newsId, long authorId);
     void insertNewsTag(long newsId, long tagId);
     void insertNewsTags(long newsId, List<Long> tagIdList);
-    News findById(long id);
+    News findById(long id) throws DAOException;
     List<News> findByAuthor(String authorName);
     List<News> findByAuthor(long authorId);
     List<News> findByTag(String tagName);
     List<News> findByTag(long tagId);
-    List<News> findAll();
+    List<News> findAll() throws DAOException;
     List<News> findByTags(List<Tag> tags);
 }
