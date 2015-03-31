@@ -5,25 +5,25 @@ import java.util.Date;
 
 public class Comment {
 
-    private int id;
+    private long id;
     private String commentText;
     private Date creationDate;
-    private int newsId;
+    private long newsId;
 
     public Comment() {
     }
 
-    public Comment(String commentText, Date creationDate, int newsId) {
+    public Comment(String commentText, Date creationDate, long newsId) {
         this.commentText = commentText;
         this.creationDate = creationDate;
         this.newsId = newsId;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -43,11 +43,35 @@ public class Comment {
         this.creationDate = creationDate;
     }
 
-    public int getNewsId() {
+    public Long getNewsId() {
         return newsId;
     }
 
-    public void setNewsId(int newsId) {
+    public void setNewsId(Long newsId) {
         this.newsId = newsId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Comment)) return false;
+
+        Comment comment = (Comment) o;
+
+        if (id != comment.id) return false;
+        if (newsId != comment.newsId) return false;
+        if (!commentText.equals(comment.commentText)) return false;
+        if (!creationDate.equals(comment.creationDate)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + commentText.hashCode();
+        result = 31 * result + creationDate.hashCode();
+        result = 31 * result + (int) (newsId ^ (newsId >>> 32));
+        return result;
     }
 }

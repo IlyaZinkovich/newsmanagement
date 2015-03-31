@@ -1,29 +1,31 @@
-package com.epam.newsmanagement.service;
+package com.epam.newsmanagement.service.implementations;
 
 import com.epam.newsmanagement.model.entity.News;
 import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
+import com.epam.newsmanagement.service.interfaces.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class NewsService {
+public class NewsServiceImpl implements NewsService {
 
     @Autowired
     private NewsDAO newsDAO;
 
-    public NewsService(NewsDAO newsDAO) {
+    public NewsServiceImpl(NewsDAO newsDAO) {
         this.newsDAO = newsDAO;
     }
 
-    public NewsService() {
+    public NewsServiceImpl() {
     }
 
-    public int addNews(News news) throws ServiceException {
+    @Override
+    public long addNews(News news) throws ServiceException {
         try {
             return newsDAO.insert(news);
         } catch (DAOException e) {
@@ -31,6 +33,7 @@ public class NewsService {
         }
     }
 
+    @Override
     public void editNews(News news) throws ServiceException {
         try {
             if (newsDAO.findById(news.getId()) != null)
@@ -40,6 +43,7 @@ public class NewsService {
         }
     }
 
+    @Override
     public void deleteNews(News news) throws ServiceException {
         try {
             if (newsDAO.findById(news.getId()) != null)
@@ -49,38 +53,47 @@ public class NewsService {
         }
     }
 
-    public News findById(int newsId) {
+    @Override
+    public News findById(long newsId) {
         return newsDAO.findById(newsId);
     }
 
-    public void addNewsAuthor(int newsId, int authorId) {
+    @Override
+    public void addNewsAuthor(long newsId, long authorId) {
         newsDAO.insertNewsAuthor(newsId, authorId);
     }
 
-    public void addNewsTag(int newsId, int tagId) {
+    @Override
+    public void addNewsTag(long newsId, long tagId) {
         newsDAO.insertNewsTag(newsId, tagId);
     }
 
-    public void addNewsTags(int newsId, List<Integer> tagIdList) {
+    @Override
+    public void addNewsTags(long newsId, List<Long> tagIdList) {
         newsDAO.insertNewsTags(newsId, tagIdList);
     }
 
+    @Override
     public List<News> findNewsByTags(List<Tag> tags) {
         return newsDAO.findByTags(tags);
     }
 
+    @Override
     public List<News> findAll() {
         return newsDAO.findAll();
     }
 
+    @Override
     public List<News> findByAuthor(String authorName) {
         return newsDAO.findByAuthor(authorName);
     }
 
+    @Override
     public List<News> findByTag(String tagName) {
         return newsDAO.findByTag(tagName);
     }
 
+    @Override
     public List<News> findByTags(List<Tag> tags) {
         return newsDAO.findByTags(tags);
     }

@@ -4,12 +4,12 @@ import com.epam.newsmanagement.model.entity.Comment;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
+import com.epam.newsmanagement.service.implementations.CommentServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -26,14 +26,14 @@ public class CommentServiceTest {
     @Mock
     private CommentDAO commentDAO;
 
-    private CommentService commentService;
+    private CommentServiceImpl commentService;
 
     private Comment testComment;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        commentService = new CommentService(commentDAO);
+        commentService = new CommentServiceImpl(commentDAO);
         testComment = new Comment("comment", new Date(), 1);
     }
 

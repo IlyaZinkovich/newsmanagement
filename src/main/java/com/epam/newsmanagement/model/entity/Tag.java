@@ -3,7 +3,7 @@ package com.epam.newsmanagement.model.entity;
 
 public class Tag {
 
-    private int id;
+    private long id;
     private String name;
 
     public Tag() {
@@ -13,11 +13,11 @@ public class Tag {
         this.name = name;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -27,5 +27,25 @@ public class Tag {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tag)) return false;
+
+        Tag tag = (Tag) o;
+
+        if (id != tag.id) return false;
+        if (!name.equals(tag.name)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + name.hashCode();
+        return result;
     }
 }

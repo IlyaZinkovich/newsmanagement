@@ -3,68 +3,77 @@ package com.epam.newsmanagement.model.persistence.oracle;
 import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import static com.epam.newsmanagement.model.persistence.oracle.PersistenceConstants.TAG_ID;
 
 @Component
-public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
+public class OracleTagDAO implements TagDAO {
+
+    @Autowired
+    private GenericDAOUtil<Tag> daoUtil;
+
+    @Autowired
+    private DataSource dataSource;
 
     private final String UPDATE_TAG_QUERY = "UPDATE Tag " +
             "set tag_name = ? " +
             "WHERE tag_id = ?";
     private final String INSERT_TAG_QUERY = "INSERT INTO TAG (TAG_NAME) VALUES (?)";
     private final String DELETE_TAG_QUERY = "DELETE Tag WHERE tag_id = ?";
-    private final String SELECT_ALL_TAGS_QUERY = "SELECT * FROM Tag";
-    private final String SELECT_TAG_BY_ID_QUERY = "SELECT * FROM Tag WHERE tag_id = ?";
-    private final String SELECT_TAG_BY_NAME_QUERY = "SELECT * FROM Tag WHERE tag_name = ?";
+    private final String SELECT_ALL_TAGS_QUERY = "SELECT Tag.tag_id, Tag.tag_name FROM Tag";
+    private final String SELECT_TAG_BY_ID_QUERY = "SELECT Tag.tag_id, Tag.tag_name FROM Tag WHERE tag_id = ?";
+    private final String SELECT_TAG_BY_NAME_QUERY = "SELECT Tag.tag_id, Tag.tag_name FROM Tag WHERE tag_name = ?";
     private final String SELECT_TAGS_BY_NEWS_ID_QUERY = "SELECT Tag.tag_id, Tag.tag_name FROM Tag " +
             "INNER JOIN News_Tag on Tag.tag_id = News_Tag.tag_id " +
             "WHERE news_id = ?";
 
     @Override
-    protected PreparedStatement prepareStatementForUpdate(Connection connection, Tag tag) throws SQLException {
+    public PreparedStatement prepareStatementForUpdate(Connection connection, Tag tag) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_TAG_QUERY);
         preparedStatement.setString(1, tag.getName());
-        preparedStatement.setInt(2, tag.getId());
+        preparedStatement.setLong(2, tag.getId());
         return preparedStatement;
     }
 
     @Override
-    protected PreparedStatement prepareStatementForInsert(Connection connection, Tag tag) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TAG_QUERY, new String[]{"tag_id"});
+    public PreparedStatement prepareStatementForInsert(Connection connection, Tag tag) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TAG_QUERY, new String[]{TAG_ID});
         preparedStatement.setString(1, tag.getName());
         return preparedStatement;
     }
 
     @Override
-    protected PreparedStatement prepareStatementForDelete(Connection connection, Tag tag) throws SQLException {
+    public PreparedStatement prepareStatementForDelete(Connection connection, Tag tag) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_TAG_QUERY);
-        preparedStatement.setInt(1, tag.getId());
+        preparedStatement.setLong(1, tag.getId());
         return preparedStatement;
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindById(Connection connection, int id) throws SQLException {
+    public PreparedStatement prepareStatementForFindById(Connection connection, long id) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TAG_BY_ID_QUERY);
-        preparedStatement.setInt(1, id);
+        preparedStatement.setLong(1, id);
         return preparedStatement;
     }
 
-    protected PreparedStatement prepareStatementForFindByNewsId(Connection connection, int newsId) throws SQLException {
+    public PreparedStatement prepareStatementForFindByNewsId(Connection connection, Long newsId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TAGS_BY_NEWS_ID_QUERY);
-        preparedStatement.setInt(1, newsId);
+        preparedStatement.setLong(1, newsId);
         return preparedStatement;
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
+    public PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_TAGS_QUERY);
         return preparedStatement;
     }
@@ -76,7 +85,7 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     }
 
     @Override
-    protected List<Tag> parseResultSet(ResultSet resultSet) throws SQLException {
+    public List<Tag> parseResultSet(ResultSet resultSet) throws SQLException {
         List<Tag> list = new LinkedList<>();
         while (resultSet.next()) {
             Tag tag = new Tag();
@@ -88,37 +97,64 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     }
 
     @Override
-    public List<Integer> insert(List<Tag> tags) throws DAOException {
-        List<Integer> idList = new LinkedList<>();
+    public List<Long> insert(List<Tag> tags) throws DAOException {
+        List<Long> idList = new LinkedList<>();
         for (Tag t : tags) {
-            int tagId = insert(t);
+            long tagId = insert(t);
             idList.add(tagId);
         }
         return idList;
     }
 
     @Override
-    public int insert(Tag tag) throws DAOException {
-        Tag foundTag = findByName(tag.getName());
-        if (foundTag != null) return foundTag.getId();
-        return super.insert(tag);
+    public Tag findById(long id) {
+        return daoUtil.findById(id, this);
     }
 
     @Override
-    public List<Tag> findByNewsId(int newsId) {
+    public long insert(Tag tag) throws DAOException {
+        Tag foundTag = findByName(tag.getName());
+        if (foundTag != null) return foundTag.getId();
+        return daoUtil.insert(tag, this);
+    }
+
+    @Override
+    public void update(Tag item) throws DAOException {
+        daoUtil.update(item, this);
+    }
+
+    @Override
+    public void delete(Tag item) throws DAOException {
+        daoUtil.delete(item, this);
+    }
+
+    @Override
+    public List<Tag> findAll() {
+        return daoUtil.findAll(this);
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    @Override
+    public List<Tag> findByNewsId(long newsId) {
         List<Tag> items = new LinkedList<>();
         Connection connection = null;
+        ResultSet resultSet = null;
         try {
             connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForFindByNewsId(connection, newsId);
-            ResultSet rs = preparedStatement.executeQuery();
-            items = parseResultSet(rs);
+            resultSet = preparedStatement.executeQuery();
+            items = parseResultSet(resultSet);
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (connection != null) try {
-                connection.close();
+            try {
+                if (resultSet != null) resultSet.close();
+                if (connection != null) connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -130,17 +166,19 @@ public class OracleTagDAO extends AbstractOracleDAO<Tag> implements TagDAO {
     public Tag findByName(String name) {
         List<Tag> items = new LinkedList<>();
         Connection connection = null;
+        ResultSet resultSet = null;
         try {
             connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForFindByName(connection, name);
-            ResultSet rs = preparedStatement.executeQuery();
-            items = parseResultSet(rs);
+            resultSet = preparedStatement.executeQuery();
+            items = parseResultSet(resultSet);
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (connection != null) try {
-                connection.close();
+            try {
+                if (resultSet != null) resultSet.close();
+                if (connection != null) connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

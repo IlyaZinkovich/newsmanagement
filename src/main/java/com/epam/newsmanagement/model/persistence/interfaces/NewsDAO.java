@@ -7,14 +7,14 @@ import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import java.util.List;
 
 public interface NewsDAO extends GenericDAO<News> {
-    void insertNewsAuthor(int newsId, int authorId);
-    void insertNewsTag(int newsId, int tagId);
-    void insertNewsTags(int newsId, List<Integer> tagIdList);
-    News findById(int id);
+    void insertNewsAuthor(long newsId, long authorId);
+    void insertNewsTag(long newsId, long tagId);
+    void insertNewsTags(long newsId, List<Long> tagIdList);
+    News findById(long id);
     List<News> findByAuthor(String authorName);
-    List<News> findByAuthor(int authorId);
+    List<News> findByAuthor(long authorId);
     List<News> findByTag(String tagName);
-    List<News> findByTag(int tagId);
+    List<News> findByTag(long tagId);
     List<News> findAll();
     List<News> findByTags(List<Tag> tags);
 }

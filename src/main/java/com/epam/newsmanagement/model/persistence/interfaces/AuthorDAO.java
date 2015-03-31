@@ -7,8 +7,8 @@ import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import java.util.Date;
 
 public interface AuthorDAO extends GenericDAO<Author> {
-    Author findById(int author);
-    Author findByNewsId(int newsId);
+    Author findById(long authorId);
+    Author findByNewsId(long newsId);
     Author findByName(String name);
-    void update(int authorId, Date expirationDate);
+    void update(long authorId, Date expirationDate);
 }

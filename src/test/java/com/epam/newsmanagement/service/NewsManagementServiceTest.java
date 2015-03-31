@@ -3,12 +3,15 @@ package com.epam.newsmanagement.service;
 import com.epam.newsmanagement.model.entity.*;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.service.exception.ServiceException;
+import com.epam.newsmanagement.service.implementations.*;
+import com.epam.newsmanagement.service.interfaces.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -34,7 +37,7 @@ public class NewsManagementServiceTest
     @Mock
     private CommentService commentService;
 
-    private NewsManagementService newsManagementService;
+    private NewsManagementServiceImpl newsManagementService;
 
     private News testNews;
     private Author testAuthor;
@@ -46,7 +49,7 @@ public class NewsManagementServiceTest
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        newsManagementService = new NewsManagementService(newsService, authorService, tagService, commentService);
+        newsManagementService = new NewsManagementServiceImpl(newsService, authorService, tagService, commentService);
         testNews = new News(1, "short", "full", "title", new Date(), new Date());
         testAuthor = new Author("author");
         testTag = new Tag("tag");
@@ -100,7 +103,7 @@ public class NewsManagementServiceTest
         newsManagementService.addNewsAuthor(testNews.getId(), testAuthor);
         verify(newsService).findById(testNews.getId());
         verify(authorService).addAuthor(testAuthor);
-        verify(newsService).addNewsAuthor(eq(testNews.getId()), anyInt());
+        verify(newsService).addNewsAuthor(eq(testNews.getId()), anyLong());
         verifyNoMoreInteractions(newsService);
         verifyNoMoreInteractions(authorService);
     }
@@ -120,7 +123,7 @@ public class NewsManagementServiceTest
         newsManagementService.addNewsTags(testNews.getId(), testTags);
         verify(newsService).findById(testNews.getId());
         verify(tagService).addTags(testTags);
-        verify(newsService).addNewsTags(eq(testNews.getId()), anyListOf(Integer.class));
+        verify(newsService).addNewsTags(eq(testNews.getId()), anyListOf(Long.class));
         verifyNoMoreInteractions(newsService);
         verifyNoMoreInteractions(tagService);
     }
@@ -140,7 +143,7 @@ public class NewsManagementServiceTest
         newsManagementService.addNewsTag(testNews.getId(), testTag);
         verify(newsService).findById(testNews.getId());
         verify(tagService).addTag(testTag);
-        verify(newsService).addNewsTag(eq(testNews.getId()), any(Integer.class));
+        verify(newsService).addNewsTag(eq(testNews.getId()), anyLong());
         verifyNoMoreInteractions(newsService);
         verifyNoMoreInteractions(tagService);
     }

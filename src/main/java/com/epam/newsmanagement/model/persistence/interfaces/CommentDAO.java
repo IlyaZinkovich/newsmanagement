@@ -7,7 +7,7 @@ import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import java.util.List;
 
 public interface CommentDAO extends GenericDAO<Comment> {
-    Comment findById(int id);
+    Comment findById(long id);
     void insert(List<Comment> comments) throws DAOException;
-    List<Comment> findByNewsId(int newsId);
+    List<Comment> findByNewsId(long newsId);
 }

@@ -5,5 +5,5 @@ import com.epam.newsmanagement.model.entity.User;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 
 public interface UserDAO extends GenericDAO<User> {
-    User findById(int userId);
+    User findById(long userId);
 }

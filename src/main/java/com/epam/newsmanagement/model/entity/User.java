@@ -1,7 +1,7 @@
 package com.epam.newsmanagement.model.entity;
 
 public class User {
-    private int id;
+    private long id;
     private String name;
     private String login;
     private String password;
@@ -16,11 +16,11 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -46,5 +46,29 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (id != user.id) return false;
+        if (!login.equals(user.login)) return false;
+        if (!name.equals(user.name)) return false;
+        if (!password.equals(user.password)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + name.hashCode();
+        result = 31 * result + login.hashCode();
+        result = 31 * result + password.hashCode();
+        return result;
     }
 }

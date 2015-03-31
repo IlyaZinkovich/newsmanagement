@@ -56,7 +56,7 @@ public class NewsTest {
     public void addNews() throws DAOException {
         int beforeSize = newsDAO.findAll().size();
         News news = new News("short", "full", "title", new Date(), new Date());
-        int newsId = newsDAO.insert(news);
+        Long newsId = newsDAO.insert(news);
         int afterSize = newsDAO.findAll().size();
         assertThat(afterSize, is(beforeSize + 1));
         assertThat(newsDAO.findById(newsId), notNullValue());
@@ -65,7 +65,7 @@ public class NewsTest {
     @Test
     public void editNews() throws DAOException {
         News news = newsDAO.findAll().get(0);
-        int newsId = news.getId();
+        Long newsId = news.getId();
         Date testDate = new Date();
         String testShort = "testShort";
         String testFull = "testFull";
@@ -93,7 +93,7 @@ public class NewsTest {
     public void deleteNews() throws DAOException {
         List<News> newsList = newsDAO.findAll();
         News news = newsList.get(0);
-        int newsToDeleteId = news.getId();
+        Long newsToDeleteId = news.getId();
         newsDAO.delete(news);
         int afterSize = newsDAO.findAll().size();
         int beforeSize = newsList.size();
@@ -112,7 +112,7 @@ public class NewsTest {
 
     @Test
     public void findSingleNews() {
-        int newsId = newsDAO.findAll().get(0).getId();
+        Long newsId = newsDAO.findAll().get(0).getId();
         News news = newsDAO.findById(newsId);
         assertThat(news, notNullValue());
         assertThat(news.getId(), is(newsId));
@@ -130,7 +130,7 @@ public class NewsTest {
     public void addComment() throws DAOException {
         News news = newsDAO.findAll().get(0);
         Comment comment = new Comment("testComment", new Date(), news.getId());
-        int commentId = commentDAO.insert(comment);
+        Long commentId = commentDAO.insert(comment);
         Comment foundByIdComment = commentDAO.findById(commentId);
         assertThat(foundByIdComment, notNullValue());
         assertThat(foundByIdComment.getNewsId(), is(news.getId()));

@@ -6,7 +6,7 @@ import java.util.List;
 
 public class News {
 
-    private int id;
+    private long id;
     private String shortText;
     private String fullText;
     private String title;
@@ -24,7 +24,7 @@ public class News {
         this.modificationDate = modificationDate;
     }
 
-    public News(int id, String shortText, String fullText, String title, Date creationDate, Date modificationDate) {
+    public News(long id, String shortText, String fullText, String title, Date creationDate, Date modificationDate) {
         this.id = id;
         this.shortText = shortText;
         this.fullText = fullText;
@@ -33,11 +33,11 @@ public class News {
         this.modificationDate = modificationDate;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -79,6 +79,34 @@ public class News {
 
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = modificationDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof News)) return false;
+
+        News news = (News) o;
+
+        if (id != news.id) return false;
+        if (!creationDate.equals(news.creationDate)) return false;
+        if (!fullText.equals(news.fullText)) return false;
+        if (!modificationDate.equals(news.modificationDate)) return false;
+        if (!shortText.equals(news.shortText)) return false;
+        if (!title.equals(news.title)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + shortText.hashCode();
+        result = 31 * result + fullText.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + creationDate.hashCode();
+        result = 31 * result + modificationDate.hashCode();
+        return result;
     }
 
     @Override

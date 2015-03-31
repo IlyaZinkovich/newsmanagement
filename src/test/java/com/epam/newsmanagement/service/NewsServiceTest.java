@@ -4,6 +4,7 @@ import com.epam.newsmanagement.model.entity.*;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
+import com.epam.newsmanagement.service.implementations.NewsServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +30,7 @@ public class NewsServiceTest {
     @Mock
     private NewsDAO newsDAO;
 
-    private NewsService newsService;
+    private NewsServiceImpl newsService;
 
     private News testNews;
     private int testAuthorId;
@@ -39,7 +40,7 @@ public class NewsServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        newsService = new NewsService(newsDAO);
+        newsService = new NewsServiceImpl(newsDAO);
         testNews = new News(1, "short", "full", "title", new Date(), new Date());
         testAuthorId = 1;
         testTagId = 1;

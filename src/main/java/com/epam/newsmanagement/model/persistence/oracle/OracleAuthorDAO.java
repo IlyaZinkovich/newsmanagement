@@ -2,24 +2,27 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 
 import com.epam.newsmanagement.model.entity.Author;
-import com.epam.newsmanagement.model.entity.News;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
-import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import static com.epam.newsmanagement.model.persistence.oracle.PersistenceConstants.AUTHOR_ID;
 
 @Component
-public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements AuthorDAO {
+public class OracleAuthorDAO implements AuthorDAO {
 
     @Autowired
-    private NewsDAO newsDAO;
+    private GenericDAOUtil<Author> daoUtil;
+
+    @Autowired
+    private DataSource dataSource;
 
     private final String UPDATE_AUTHOR_QUERY = "UPDATE Author " +
             "set author_name = ? " +
@@ -31,68 +34,68 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
             "set expired = ? " +
             "WHERE author_id = ?";
     private final String DELETE_AUTHOR_QUERY = "DELETE Author WHERE author_id = ?";
-    private final String SELECT_AUTHOR_BY_ID_QUERY = "SELECT * FROM Author WHERE author_id = ?";
-    private final String SELECT_AUTHOR_BY_NAME_QUERY = "SELECT * FROM Author WHERE author_name = ?";
-    private final String SELECT_AUTHOR_BY_NEWS_ID_QUERY = "SELECT Author.author_id, Author.author_name FROM Author " +
+    private final String SELECT_AUTHOR_BY_ID_QUERY = "SELECT Author.author_id, Author.author_name, Author.expired FROM Author WHERE author_id = ?";
+    private final String SELECT_AUTHOR_BY_NAME_QUERY = "SELECT Author.author_id, Author.author_name, Author.expired FROM Author WHERE author_name = ?";
+    private final String SELECT_AUTHOR_BY_NEWS_ID_QUERY = "SELECT Author.author_id, Author.author_name, Author.expired FROM Author " +
             "INNER JOIN News_Author on Author.author_id = News_Author.author_id " +
             "WHERE news_id = ?";
 
 
     @Override
-    protected PreparedStatement prepareStatementForUpdate(Connection connection, Author author) throws SQLException {
+    public PreparedStatement prepareStatementForUpdate(Connection connection, Author author) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_AUTHOR_QUERY);
         preparedStatement.setString(1, author.getName());
-        preparedStatement.setInt(2, author.getId());
+        preparedStatement.setLong(2, author.getId());
         return preparedStatement;
     }
 
-    protected PreparedStatement prepareStatementForUpdateExpired(Connection connection, int authorId, Date expiredDate) throws SQLException {
+    public PreparedStatement prepareStatementForUpdateExpired(Connection connection, long authorId, Date expiredDate) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXPIRED_AUTHOR);
         preparedStatement.setTimestamp(1, new Timestamp(expiredDate.getTime()));
-        preparedStatement.setInt(2, authorId);
+        preparedStatement.setLong(2, authorId);
         return preparedStatement;
     }
 
     @Override
-    protected PreparedStatement prepareStatementForInsert(Connection connection, Author author) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AUTHOR_QUERY, new String[]{"AUTHOR_ID"});
+    public PreparedStatement prepareStatementForInsert(Connection connection, Author author) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_AUTHOR_QUERY, new String[]{AUTHOR_ID});
         preparedStatement.setString(1, author.getName());
         return preparedStatement;
     }
 
     @Override
-    protected PreparedStatement prepareStatementForDelete(Connection connection, Author author) throws SQLException {
+    public PreparedStatement prepareStatementForDelete(Connection connection, Author author) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_AUTHOR_QUERY);
-        preparedStatement.setInt(1, author.getId());
+        preparedStatement.setLong(1, author.getId());
         return preparedStatement;
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindById(Connection connection, int id) throws SQLException {
+    public PreparedStatement prepareStatementForFindById(Connection connection, long id) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_AUTHOR_BY_ID_QUERY);
-        preparedStatement.setInt(1, id);
+        preparedStatement.setLong(1, id);
         return preparedStatement;
     }
 
-    protected PreparedStatement prepareStatementForFindByName(Connection connection, String name) throws SQLException {
+    public PreparedStatement prepareStatementForFindByName(Connection connection, String name) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_AUTHOR_BY_NAME_QUERY);
         preparedStatement.setString(1, name);
         return preparedStatement;
     }
 
-    protected PreparedStatement prepareStatementForFindByNewsID(Connection connection, int newsId) throws SQLException {
+    public PreparedStatement prepareStatementForFindByNewsID(Connection connection, long newsId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_AUTHOR_BY_NEWS_ID_QUERY);
-        preparedStatement.setInt(1, newsId);
+        preparedStatement.setLong(1, newsId);
         return preparedStatement;
     }
 
     @Override
-    protected PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
+    public PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected List<Author> parseResultSet(ResultSet resultSet) throws SQLException {
+    public List<Author> parseResultSet(ResultSet resultSet) throws SQLException {
         List<Author> list = new LinkedList<>();
         while (resultSet.next()) {
             Author author = new Author();
@@ -106,20 +109,27 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     }
 
     @Override
-    public Author findByNewsId(int newsId) {
+    public Author findById(long authorId) {
+        return null;
+    }
+
+    @Override
+    public Author findByNewsId(long newsId) {
         List<Author> items = new LinkedList<>();
         Connection connection = null;
+        ResultSet resultSet = null;
         try {
             connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForFindByNewsID(connection, newsId);
-            ResultSet rs = preparedStatement.executeQuery();
-            items = parseResultSet(rs);
+            resultSet = preparedStatement.executeQuery();
+            items = parseResultSet(resultSet);
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (connection != null) try {
-                connection.close();
+            try {
+                if (resultSet != null) resultSet.close();
+                if (connection != null) connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -132,17 +142,19 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     public Author findByName(String name) {
         List<Author> items = new LinkedList<>();
         Connection connection = null;
+        ResultSet resultSet = null;
         try {
             connection = DataSourceUtils.getConnection(dataSource);
             PreparedStatement preparedStatement = prepareStatementForFindByName(connection, name);
-            ResultSet rs = preparedStatement.executeQuery();
-            items = parseResultSet(rs);
+            resultSet = preparedStatement.executeQuery();
+            items = parseResultSet(resultSet);
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (connection != null) try {
-                connection.close();
+            try {
+                if (resultSet != null) resultSet.close();
+                if (connection != null) connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -152,14 +164,34 @@ public class OracleAuthorDAO extends AbstractOracleDAO<Author> implements Author
     }
 
     @Override
-    public int insert(Author author) throws DAOException {
+    public long insert(Author author) throws DAOException {
         Author foundAuthor = findByName(author.getName());
         if (foundAuthor != null) return foundAuthor.getId();
-        return super.insert(author);
+        return daoUtil.insert(author, this);
     }
 
     @Override
-    public void update(int authorId, Date expirationDate) {
+    public void update(Author item) throws DAOException {
+        daoUtil.update(item, this);
+    }
+
+    @Override
+    public void delete(Author item) throws DAOException {
+        daoUtil.delete(item, this);
+    }
+
+    @Override
+    public List<Author> findAll() {
+        return daoUtil.findAll(this);
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    @Override
+    public void update(long authorId, Date expirationDate) {
         Connection connection = null;
         try {
             connection = DataSourceUtils.getConnection(dataSource);
