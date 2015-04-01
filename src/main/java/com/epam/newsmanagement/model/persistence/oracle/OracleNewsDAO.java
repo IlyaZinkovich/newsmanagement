@@ -190,39 +190,21 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
 
     @Override
     public void insertNewsAuthor(long newsId, long authorId) {
-        Connection connection = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForInsertIntoNewsAuthor(connection, newsId, authorId);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForInsertIntoNewsAuthor(connection, newsId, authorId)) {
             preparedStatement.executeUpdate();
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
     }
 
     @Override
     public void insertNewsTag(long newsId, long tagId) {
-        Connection connection = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForInsertIntoNewsTag(connection, newsId, tagId);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForInsertIntoNewsTag(connection, newsId, tagId)) {
             preparedStatement.executeUpdate();
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
     }
 
@@ -240,23 +222,12 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     @Override
     public List<News> findByAuthor(String authorName) {
         List<News> newsList = new LinkedList<>();
-        Connection connection = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForFindNewsByAuthorName(connection, authorName);
-            resultSet = preparedStatement.executeQuery();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForFindNewsByAuthorName(connection, authorName);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             newsList = parseResultSet(resultSet);
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
         if (newsList.isEmpty()) return null;
         return newsList;
@@ -265,23 +236,12 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     @Override
     public List<News> findByAuthor(long authorId) {
         List<News> newsList = new LinkedList<>();
-        Connection connection = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForFindNewsIdByAuthorId(connection, authorId);
-            resultSet = preparedStatement.executeQuery();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForFindNewsIdByAuthorId(connection, authorId);
+             ResultSet resultSet = preparedStatement.executeQuery()){
             newsList = parseResultSet(resultSet);
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
         if (newsList.isEmpty()) return null;
         return newsList;
@@ -290,22 +250,12 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     @Override
     public List<News> findByTag(String tagName) {
         List<News> newsList = new LinkedList<>();
-        Connection connection = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForFindNewsByTagName(connection, tagName);
-            resultSet = preparedStatement.executeQuery();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForFindNewsByTagName(connection, tagName);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             newsList = parseResultSet(resultSet);
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
         if (newsList.isEmpty()) return null;
         return newsList;
@@ -314,23 +264,12 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     @Override
     public List<News> findByTag(long tagId) {
         List<News> newsList = new LinkedList<>();
-        Connection connection = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForFindNewsByTagId(connection, tagId);
-            resultSet = preparedStatement.executeQuery();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForFindNewsByTagId(connection, tagId);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             newsList = parseResultSet(resultSet);
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
         if (newsList.isEmpty()) return null;
         return newsList;
@@ -359,21 +298,12 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     @Override
     public List<News> findByTags(List<Tag> tags) {
         List<News> newsList = new LinkedList<>();
-        Connection connection = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = preparedStatementForFindNewsByTags(connection, tags);
-            ResultSet rs = preparedStatement.executeQuery();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = preparedStatementForFindNewsByTags(connection, tags);
+             ResultSet rs = preparedStatement.executeQuery()) {
             newsList = parseResultSet(rs);
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
         return newsList;
     }

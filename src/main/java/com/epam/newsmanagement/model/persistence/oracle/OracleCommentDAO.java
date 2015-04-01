@@ -125,23 +125,12 @@ public class OracleCommentDAO implements CommentDAO, DAOHelper<Comment> {
     @Override
     public List<Comment> findByNewsId(long newsId) {
         List<Comment> items = new LinkedList<>();
-        Connection connection = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForFindById(connection, newsId);
-            resultSet = preparedStatement.executeQuery();
-            items = parseResultSet(resultSet);
-            preparedStatement.close();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForFindById(connection, newsId);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+                    items = parseResultSet(resultSet);
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
         return items;
     }

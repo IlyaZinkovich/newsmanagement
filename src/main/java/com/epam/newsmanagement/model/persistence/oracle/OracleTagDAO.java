@@ -142,23 +142,14 @@ public class OracleTagDAO implements TagDAO, DAOHelper<Tag> {
     @Override
     public List<Tag> findByNewsId(long newsId) {
         List<Tag> items = new LinkedList<>();
-        Connection connection = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForFindByNewsId(connection, newsId);
-            resultSet = preparedStatement.executeQuery();
-            items = parseResultSet(resultSet);
-            preparedStatement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        try (Connection connection = dataSource.getConnection()){
+            try (PreparedStatement preparedStatement = prepareStatementForFindByNewsId(connection, newsId)) {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    items = parseResultSet(resultSet);
+                }
             }
+        } catch (SQLException e) {
+            throw new DAOException(e);
         }
         return items;
     }
@@ -166,23 +157,12 @@ public class OracleTagDAO implements TagDAO, DAOHelper<Tag> {
     @Override
     public Tag findByName(String name) {
         List<Tag> items = new LinkedList<>();
-        Connection connection = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForFindByName(connection, name);
-            resultSet = preparedStatement.executeQuery();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForFindByName(connection, name);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             items = parseResultSet(resultSet);
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
         if (items.isEmpty()) return null;
         return items.get(0);

@@ -117,23 +117,14 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
     @Override
     public Author findByNewsId(long newsId) {
         List<Author> items = new LinkedList<>();
-        Connection connection = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForFindByNewsID(connection, newsId);
-            resultSet = preparedStatement.executeQuery();
-            items = parseResultSet(resultSet);
-            preparedStatement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        try (Connection connection = dataSource.getConnection()){
+            try (PreparedStatement preparedStatement = prepareStatementForFindByNewsID(connection, newsId)) {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    items = parseResultSet(resultSet);
+                }
             }
+        } catch (SQLException e) {
+            throw new DAOException(e);
         }
         if (items.isEmpty()) return null;
         return items.get(0);
@@ -193,20 +184,11 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
 
     @Override
     public void update(long authorId, Date expirationDate) {
-        Connection connection = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForUpdateExpired(connection, authorId, expirationDate);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForUpdateExpired(connection, authorId, expirationDate)) {
             preparedStatement.executeUpdate();
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
     }
 
