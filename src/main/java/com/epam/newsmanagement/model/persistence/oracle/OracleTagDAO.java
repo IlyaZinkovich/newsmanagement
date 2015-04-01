@@ -2,10 +2,8 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -54,9 +52,9 @@ public class OracleTagDAO implements TagDAO, DAOHelper<Tag> {
     }
 
     @Override
-    public PreparedStatement prepareStatementForDelete(Connection connection, Tag tag) throws SQLException {
+    public PreparedStatement prepareStatementForDelete(Connection connection, long tagId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_TAG_QUERY);
-        preparedStatement.setLong(1, tag.getId());
+        preparedStatement.setLong(1, tagId);
         return preparedStatement;
     }
 
@@ -125,8 +123,8 @@ public class OracleTagDAO implements TagDAO, DAOHelper<Tag> {
     }
 
     @Override
-    public void delete(Tag item) throws DAOException {
-        daoUtil.delete(item, this);
+    public void delete(long tagId) throws DAOException {
+        daoUtil.delete(tagId, this);
     }
 
     @Override
@@ -140,8 +138,8 @@ public class OracleTagDAO implements TagDAO, DAOHelper<Tag> {
     }
 
     @Override
-    public List<Tag> findByNewsId(long newsId) {
-        List<Tag> items = new LinkedList<>();
+    public List<Tag> findByNewsId(long newsId) throws DAOException {
+        List<Tag> items;
         try (Connection connection = dataSource.getConnection()){
             try (PreparedStatement preparedStatement = prepareStatementForFindByNewsId(connection, newsId)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -155,8 +153,8 @@ public class OracleTagDAO implements TagDAO, DAOHelper<Tag> {
     }
 
     @Override
-    public Tag findByName(String name) {
-        List<Tag> items = new LinkedList<>();
+    public Tag findByName(String name) throws DAOException {
+        List<Tag> items;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = prepareStatementForFindByName(connection, name);
              ResultSet resultSet = preparedStatement.executeQuery()) {

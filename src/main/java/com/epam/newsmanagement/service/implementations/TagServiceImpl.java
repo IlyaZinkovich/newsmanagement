@@ -35,7 +35,29 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> findByNewsId(long newsId) {
-        return tagDAO.findByNewsId(newsId);
+    public void editTag(Tag tag) throws ServiceException {
+        try {
+            tagDAO.update(tag);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public void deleteTag(long tagId) throws ServiceException {
+        try {
+            tagDAO.delete(tagId);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public List<Tag> findByNewsId(long newsId) throws ServiceException {
+        try {
+            return tagDAO.findByNewsId(newsId);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 }

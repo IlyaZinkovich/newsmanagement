@@ -4,9 +4,7 @@ package com.epam.newsmanagement.model.persistence.oracle;
 import com.epam.newsmanagement.model.entity.Author;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
-import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -65,9 +63,9 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
     }
 
     @Override
-    public PreparedStatement prepareStatementForDelete(Connection connection, Author author) throws SQLException {
+    public PreparedStatement prepareStatementForDelete(Connection connection, long authorId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_AUTHOR_QUERY);
-        preparedStatement.setLong(1, author.getId());
+        preparedStatement.setLong(1, authorId);
         return preparedStatement;
     }
 
@@ -115,14 +113,12 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
     }
 
     @Override
-    public Author findByNewsId(long newsId) {
-        List<Author> items = new LinkedList<>();
-        try (Connection connection = dataSource.getConnection()){
-            try (PreparedStatement preparedStatement = prepareStatementForFindByNewsID(connection, newsId)) {
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    items = parseResultSet(resultSet);
-                }
-            }
+    public Author findByNewsId(long newsId) throws DAOException {
+        List<Author> items;
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForFindByNewsID(connection, newsId);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            items = parseResultSet(resultSet);
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -131,25 +127,14 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
     }
 
     @Override
-    public Author findByName(String name) {
-        List<Author> items = new LinkedList<>();
-        Connection connection = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement preparedStatement = prepareStatementForFindByName(connection, name);
-            resultSet = preparedStatement.executeQuery();
+    public Author findByName(String name) throws DAOException {
+        List<Author> items;
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = prepareStatementForFindByName(connection, name);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             items = parseResultSet(resultSet);
-            preparedStatement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (resultSet != null) resultSet.close();
-                if (connection != null) connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            throw new DAOException(e);
         }
         if (items.isEmpty()) return null;
         return items.get(0);
@@ -168,8 +153,8 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
     }
 
     @Override
-    public void delete(Author item) throws DAOException {
-        daoUtil.delete(item, this);
+    public void delete(long authorId) throws DAOException {
+        daoUtil.delete(authorId, this);
     }
 
     @Override
@@ -183,7 +168,7 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
     }
 
     @Override
-    public void update(long authorId, Date expirationDate) {
+    public void update(long authorId, Date expirationDate) throws DAOException {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = prepareStatementForUpdateExpired(connection, authorId, expirationDate)) {
             preparedStatement.executeUpdate();

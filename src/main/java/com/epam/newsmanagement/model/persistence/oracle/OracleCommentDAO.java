@@ -4,10 +4,8 @@ package com.epam.newsmanagement.model.persistence.oracle;
 import com.epam.newsmanagement.model.entity.Comment;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
-import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -65,9 +63,9 @@ public class OracleCommentDAO implements CommentDAO, DAOHelper<Comment> {
     }
 
     @Override
-    public PreparedStatement prepareStatementForDelete(Connection connection, Comment comment) throws SQLException {
+    public PreparedStatement prepareStatementForDelete(Connection connection, long commentId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_COMMENTS_QUERY);
-        preparedStatement.setLong(1, comment.getId());
+        preparedStatement.setLong(1, commentId);
         return preparedStatement;
     }
 
@@ -101,8 +99,8 @@ public class OracleCommentDAO implements CommentDAO, DAOHelper<Comment> {
     }
 
     @Override
-    public void delete(Comment item) throws DAOException {
-        daoUtil.delete(item, this);
+    public void delete(long commentId) throws DAOException {
+        daoUtil.delete(commentId, this);
     }
 
     @Override
@@ -116,15 +114,18 @@ public class OracleCommentDAO implements CommentDAO, DAOHelper<Comment> {
     }
 
     @Override
-    public void insert(List<Comment> comments) throws DAOException {
+    public List<Long> insert(List<Comment> comments) throws DAOException {
+        List<Long> idList = new LinkedList<>();
         for (Comment comment : comments) {
-            insert(comment);
+            long commentId = insert(comment);
+            idList.add(commentId);
         }
+        return idList;
     }
 
     @Override
-    public List<Comment> findByNewsId(long newsId) {
-        List<Comment> items = new LinkedList<>();
+    public List<Comment> findByNewsId(long newsId) throws DAOException {
+        List<Comment> items;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = prepareStatementForFindById(connection, newsId);
              ResultSet resultSet = preparedStatement.executeQuery()) {

@@ -41,19 +41,18 @@ public class CommentServiceTest {
     @Test
     public void deleteCommentSucceed() throws ServiceException, DAOException {
         when(commentDAO.findById(testComment.getId())).thenReturn(testComment);
-        commentService.delete(testComment);
+        commentService.deleteComment(testComment.getId());
         verify(commentDAO).findById(testComment.getId());
-        verify(commentDAO).delete(testComment);
+        verify(commentDAO).delete(testComment.getId());
         verifyNoMoreInteractions(commentDAO);
     }
 
     @Test
     public void deleteCommentDoesNothingIfNewsNotFound() throws ServiceException, DAOException {
         when(commentDAO.findById(testComment.getId())).thenReturn(null);
-        commentService.delete(testComment);
+        commentService.deleteComment(testComment.getId());
         verify(commentDAO).findById(testComment.getId());
         verifyNoMoreInteractions(commentDAO);
     }
-
 
 }

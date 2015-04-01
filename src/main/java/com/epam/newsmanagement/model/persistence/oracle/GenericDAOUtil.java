@@ -1,7 +1,6 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
@@ -57,9 +56,9 @@ public class GenericDAOUtil<Item> {
         }
     }
 
-    public void delete(Item item, DAOHelper<Item> dao) throws DAOException {
+    public void delete(long itemId, DAOHelper<Item> dao) throws DAOException {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = dao.prepareStatementForDelete(connection, item)) {
+             PreparedStatement preparedStatement = dao.prepareStatementForDelete(connection, itemId)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException(e);

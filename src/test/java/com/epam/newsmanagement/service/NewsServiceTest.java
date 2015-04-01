@@ -65,7 +65,7 @@ public class NewsServiceTest {
     }
 
     @Test
-    public void editNewsDoesNothingIfNewsNotFound() throws ServiceException {
+    public void editNewsDoesNothingIfNewsNotFound() throws ServiceException, DAOException {
         when(newsDAO.findById(testNews.getId())).thenReturn(null);
         newsService.editNews(testNews);
         verify(newsDAO).findById(testNews.getId());
@@ -75,16 +75,16 @@ public class NewsServiceTest {
     @Test
     public void deleteNewsSucceed() throws ServiceException, DAOException {
         when(newsDAO.findById(testNews.getId())).thenReturn(testNews);
-        newsService.deleteNews(testNews);
+        newsService.deleteNews(testNews.getId());
         verify(newsDAO).findById(testNews.getId());
-        verify(newsDAO).delete(testNews);
+        verify(newsDAO).delete(testNews.getId());
         verifyNoMoreInteractions(newsDAO);
     }
 
     @Test
     public void deleteNewsDoesNothingIfNewsNotFound() throws ServiceException, DAOException {
         when(newsDAO.findById(testNews.getId())).thenReturn(null);
-        newsService.deleteNews(testNews);
+        newsService.deleteNews(testNews.getId());
         verify(newsDAO).findById(testNews.getId());
         verifyNoMoreInteractions(newsDAO);
     }

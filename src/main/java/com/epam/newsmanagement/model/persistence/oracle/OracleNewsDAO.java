@@ -4,10 +4,8 @@ package com.epam.newsmanagement.model.persistence.oracle;
 import com.epam.newsmanagement.model.entity.News;
 import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -106,9 +104,9 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     }
 
     @Override
-    public PreparedStatement prepareStatementForDelete(Connection connection, News news) throws SQLException {
+    public PreparedStatement prepareStatementForDelete(Connection connection, long newsId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_NEWS_QUERY);
-        preparedStatement.setLong(1, news.getId());
+        preparedStatement.setLong(1, newsId);
         return preparedStatement;
     }
 
@@ -189,7 +187,7 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     }
 
     @Override
-    public void insertNewsAuthor(long newsId, long authorId) {
+    public void insertNewsAuthor(long newsId, long authorId) throws DAOException {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = prepareStatementForInsertIntoNewsAuthor(connection, newsId, authorId)) {
             preparedStatement.executeUpdate();
@@ -199,7 +197,7 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     }
 
     @Override
-    public void insertNewsTag(long newsId, long tagId) {
+    public void insertNewsTag(long newsId, long tagId) throws DAOException {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = prepareStatementForInsertIntoNewsTag(connection, newsId, tagId)) {
             preparedStatement.executeUpdate();
@@ -209,7 +207,7 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     }
 
     @Override
-    public void insertNewsTags(long newsId, List<Long> tagIdList) {
+    public void insertNewsTags(long newsId, List<Long> tagIdList) throws DAOException {
         for (Long tagId : tagIdList) insertNewsTag(newsId, tagId);
     }
 
@@ -220,8 +218,8 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
 
 
     @Override
-    public List<News> findByAuthor(String authorName) {
-        List<News> newsList = new LinkedList<>();
+    public List<News> findByAuthor(String authorName) throws DAOException {
+        List<News> newsList;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = prepareStatementForFindNewsByAuthorName(connection, authorName);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -234,8 +232,8 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     }
 
     @Override
-    public List<News> findByAuthor(long authorId) {
-        List<News> newsList = new LinkedList<>();
+    public List<News> findByAuthor(long authorId) throws DAOException {
+        List<News> newsList;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = prepareStatementForFindNewsIdByAuthorId(connection, authorId);
              ResultSet resultSet = preparedStatement.executeQuery()){
@@ -248,8 +246,8 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     }
 
     @Override
-    public List<News> findByTag(String tagName) {
-        List<News> newsList = new LinkedList<>();
+    public List<News> findByTag(String tagName) throws DAOException {
+        List<News> newsList;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = prepareStatementForFindNewsByTagName(connection, tagName);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -262,8 +260,8 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     }
 
     @Override
-    public List<News> findByTag(long tagId) {
-        List<News> newsList = new LinkedList<>();
+    public List<News> findByTag(long tagId) throws DAOException {
+        List<News> newsList;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = prepareStatementForFindNewsByTagId(connection, tagId);
              ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -286,8 +284,8 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     }
 
     @Override
-    public void delete(News item) throws DAOException {
-        daoUtil.delete(item, this);
+    public void delete(long newsId) throws DAOException {
+        daoUtil.delete(newsId, this);
     }
 
     @Override
@@ -296,8 +294,8 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     }
 
     @Override
-    public List<News> findByTags(List<Tag> tags) {
-        List<News> newsList = new LinkedList<>();
+    public List<News> findByTags(List<Tag> tags) throws DAOException {
+        List<News> newsList;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = preparedStatementForFindNewsByTags(connection, tags);
              ResultSet rs = preparedStatement.executeQuery()) {

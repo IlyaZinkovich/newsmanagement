@@ -44,10 +44,9 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public void deleteNews(News news) throws ServiceException {
+    public void deleteNews(long newsId) throws ServiceException {
         try {
-            if (newsDAO.findById(news.getId()) != null)
-                newsDAO.delete(news);
+            newsDAO.delete(newsId);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -59,43 +58,75 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public void addNewsAuthor(long newsId, long authorId) {
-        newsDAO.insertNewsAuthor(newsId, authorId);
+    public void addNewsAuthor(long newsId, long authorId) throws ServiceException {
+        try {
+            newsDAO.insertNewsAuthor(newsId, authorId);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public void addNewsTag(long newsId, long tagId) {
-        newsDAO.insertNewsTag(newsId, tagId);
+    public void addNewsTag(long newsId, long tagId) throws ServiceException {
+        try {
+            newsDAO.insertNewsTag(newsId, tagId);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public void addNewsTags(long newsId, List<Long> tagIdList) {
-        newsDAO.insertNewsTags(newsId, tagIdList);
+    public void addNewsTags(long newsId, List<Long> tagIdList) throws ServiceException {
+        try {
+            newsDAO.insertNewsTags(newsId, tagIdList);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public List<News> findNewsByTags(List<Tag> tags) {
-        return newsDAO.findByTags(tags);
+    public List<News> findNewsByTags(List<Tag> tags) throws ServiceException {
+        try {
+            return newsDAO.findByTags(tags);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public List<News> findAll() throws DAOException {
-        return newsDAO.findAll();
+    public List<News> findAll() throws ServiceException {
+        try {
+            return newsDAO.findAll();
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public List<News> findByAuthor(String authorName) {
-        return newsDAO.findByAuthor(authorName);
+    public List<News> findByAuthor(String authorName) throws ServiceException {
+        try {
+            return newsDAO.findByAuthor(authorName);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public List<News> findByTag(String tagName) {
-        return newsDAO.findByTag(tagName);
+    public List<News> findByTag(String tagName) throws ServiceException {
+        try {
+            return newsDAO.findByTag(tagName);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public List<News> findByTags(List<Tag> tags) {
-        return newsDAO.findByTags(tags);
+    public List<News> findByTags(List<Tag> tags) throws ServiceException {
+        try {
+            return newsDAO.findByTags(tags);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
 }
