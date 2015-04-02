@@ -52,4 +52,17 @@ public interface AuthorService {
      *
      */
     Author findByNewsId(long newsId) throws ServiceException;
+
+    /**
+     * Returns the author with the given id.
+     *
+     * @param authorId
+     *        Id of the author
+     *
+     * @return the author with with the given id
+     *
+     * @throws ServiceException in case of DAOException
+     *
+     */
+    Author findById(long authorId) throws ServiceException;
 }

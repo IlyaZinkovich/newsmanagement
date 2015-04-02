@@ -6,11 +6,12 @@ public class Role {
 
     private String name;
 
-    public Role(String name) {
-        this.name = name;
+    public Role() {
     }
 
-    public Role() {
+    public Role(long userId, String name) {
+        this.userId = userId;
+        this.name = name;
     }
 
     public long getUserId() {

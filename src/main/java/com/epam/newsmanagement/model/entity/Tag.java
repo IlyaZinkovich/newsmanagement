@@ -9,7 +9,8 @@ public class Tag {
     public Tag() {
     }
 
-    public Tag(String name) {
+    public Tag(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 

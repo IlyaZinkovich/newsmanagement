@@ -16,6 +16,13 @@ public class TagServiceImpl implements TagService {
     @Autowired
     private TagDAO tagDAO;
 
+    public TagServiceImpl() {
+    }
+
+    public TagServiceImpl(TagDAO tagDAO) {
+        this.tagDAO = tagDAO;
+    }
+
     @Override
     public long addTag(Tag tag) throws ServiceException {
         try {

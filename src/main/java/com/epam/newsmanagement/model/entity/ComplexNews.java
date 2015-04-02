@@ -12,13 +12,6 @@ public class ComplexNews {
     public ComplexNews() {
     }
 
-    public ComplexNews(News news, Author author, List<Tag> tags) {
-        this.news = news;
-        this.author = author;
-        this.tags = tags;
-        this.comments = new LinkedList<>();
-    }
-
     public ComplexNews(News news, Author author, List<Tag> tags, List<Comment> comments) {
         this.news = news;
         this.author = author;

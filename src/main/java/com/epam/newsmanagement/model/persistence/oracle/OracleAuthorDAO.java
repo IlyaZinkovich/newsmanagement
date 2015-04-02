@@ -108,8 +108,8 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
     }
 
     @Override
-    public Author findById(long authorId) {
-        return null;
+    public Author findById(long authorId) throws DAOException {
+        return daoUtil.findById(authorId, this);
     }
 
     @Override
@@ -142,8 +142,8 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
 
     @Override
     public long insert(Author author) throws DAOException {
-        Author foundAuthor = findByName(author.getName());
-        if (foundAuthor != null) return foundAuthor.getId();
+//        Author foundAuthor = findByName(author.getName());
+//        if (foundAuthor != null) return foundAuthor.getId();
         return daoUtil.insert(author, this);
     }
 

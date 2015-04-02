@@ -14,6 +14,13 @@ public class AuthorServiceImpl implements AuthorService {
     @Autowired
     private AuthorDAO authorDAO;
 
+    public AuthorServiceImpl() {
+    }
+
+    public AuthorServiceImpl(AuthorDAO authorDAO) {
+        this.authorDAO = authorDAO;
+    }
+
     @Override
     public long addAuthor(Author author) throws ServiceException {
         try {
@@ -45,6 +52,15 @@ public class AuthorServiceImpl implements AuthorService {
     public Author findByNewsId(long newsId) throws ServiceException {
         try {
             return authorDAO.findByNewsId(newsId);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public Author findById(long authorId) throws ServiceException {
+        try {
+            return authorDAO.findById(authorId);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }

@@ -2,7 +2,6 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.entity.Role;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.RoleDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,9 +47,9 @@ public class OracleRoleDAO implements RoleDAO, DAOHelper<Role> {
     }
 
     @Override
-    public PreparedStatement prepareStatementForDelete(Connection connection, Role role) throws SQLException {
+    public PreparedStatement prepareStatementForDelete(Connection connection, long roleId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ROLE_QUERY);
-        preparedStatement.setLong(1, role.getUserId());
+        preparedStatement.setLong(1, roleId);
         return preparedStatement;
     }
 
@@ -89,13 +88,18 @@ public class OracleRoleDAO implements RoleDAO, DAOHelper<Role> {
     }
 
     @Override
-    public void delete(Role item) throws DAOException {
-        daoUtil.delete(item, this);
+    public void delete(long roleId) throws DAOException {
+        daoUtil.delete(roleId, this);
     }
 
     @Override
     public List<Role> findAll() throws DAOException {
         return daoUtil.findAll(this);
+    }
+
+    @Override
+    public Role findById(long id) throws DAOException {
+        throw new UnsupportedOperationException();
     }
 
     @Override

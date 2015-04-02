@@ -4,7 +4,6 @@ import com.epam.newsmanagement.model.entity.Comment;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
-import com.epam.newsmanagement.service.interfaces.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class CommentServiceImpl implements CommentService {
+public class CommentServiceImpl implements com.epam.newsmanagement.service.interfaces.CommentService {
 
     @Autowired
     private CommentDAO commentDAO;

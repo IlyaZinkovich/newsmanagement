@@ -2,7 +2,6 @@ package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.entity.User;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.model.persistence.interfaces.DAOHelper;
 import com.epam.newsmanagement.model.persistence.interfaces.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -57,9 +56,9 @@ public class OracleUserDAO implements UserDAO, DAOHelper<User> {
     }
 
     @Override
-    public PreparedStatement prepareStatementForDelete(Connection connection, User user) throws SQLException {
+    public PreparedStatement prepareStatementForDelete(Connection connection, long userId) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER_QUERY);
-        preparedStatement.setLong(1, user.getId());
+        preparedStatement.setLong(1, userId);
         return preparedStatement;
     }
 
@@ -101,8 +100,8 @@ public class OracleUserDAO implements UserDAO, DAOHelper<User> {
     }
 
     @Override
-    public void delete(User item) throws DAOException {
-        daoUtil.delete(item, this);
+    public void delete(long userId) throws DAOException {
+        daoUtil.delete(userId, this);
     }
 
     @Override

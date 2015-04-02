@@ -13,7 +13,8 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(String commentText, Date creationDate, long newsId) {
+    public Comment(long id, String commentText, Date creationDate, long newsId) {
+        this.id = id;
         this.commentText = commentText;
         this.creationDate = creationDate;
         this.newsId = newsId;

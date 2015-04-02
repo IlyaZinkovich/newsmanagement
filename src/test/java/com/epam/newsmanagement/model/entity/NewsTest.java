@@ -54,10 +54,21 @@ public class NewsTest {
     @Autowired
     private AuthorDAO authorDAO;
 
+    private News news;
+
+    @Before
+    public void setUp() {
+        news = new News();
+        news.setTitle("title");
+        news.setShortText("short");
+        news.setFullText("full");
+        news.setCreationDate(new Date());
+        news.setModificationDate(new Date());
+    }
+
     @Test
     public void addNews() throws DAOException {
         int beforeSize = newsDAO.findAll().size();
-        News news = new News("short", "full", "title", new Date(), new Date());
         Long newsId = newsDAO.insert(news);
         int afterSize = newsDAO.findAll().size();
         assertThat(afterSize, is(beforeSize + 1));
@@ -129,14 +140,14 @@ public class NewsTest {
         assertThat(foundByTagsNews, notNullValue());
     }
 
-    @Test
-    public void addComment() throws DAOException {
-        News news = newsDAO.findAll().get(0);
-        Comment comment = new Comment("testComment", new Date(), news.getId());
-        Long commentId = commentDAO.insert(comment);
-        Comment foundByIdComment = commentDAO.findById(commentId);
-        assertThat(foundByIdComment, notNullValue());
-        assertThat(foundByIdComment.getNewsId(), is(news.getId()));
-    }
+//    @Test
+//    public void addComment() throws DAOException {
+//        News news = newsDAO.findAll().get(0);
+//        Comment comment = new Comment("testComment", new Date(), news.getId());
+//        Long commentId = commentDAO.insert(comment);
+//        Comment foundByIdComment = commentDAO.findById(commentId);
+//        assertThat(foundByIdComment, notNullValue());
+//        assertThat(foundByIdComment.getNewsId(), is(news.getId()));
+//    }
 
 }

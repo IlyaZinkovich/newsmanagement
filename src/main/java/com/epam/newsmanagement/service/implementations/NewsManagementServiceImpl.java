@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class NewsManagementServiceImpl implements NewsManagementService {
+public class NewsManagementServiceImpl implements com.epam.newsmanagement.service.interfaces.NewsManagementService {
 
     @Autowired
     private NewsService newsService;
@@ -76,13 +76,17 @@ public class NewsManagementServiceImpl implements NewsManagementService {
 
     @Override
     public ComplexNews findComplexNewsById(long newsId) throws ServiceException {
-        News news = null;
+        ComplexNews complexNews = new ComplexNews();
         try {
-            news = newsService.findById(newsId);
+            News news = newsService.findById(newsId);
             Author author = authorService.findByNewsId(newsId);
             List<Tag> tags = tagService.findByNewsId(newsId);
             List<Comment> comments = commentService.findByNewsId(newsId);
-            return new ComplexNews(news, author, tags, comments);
+            complexNews.setNews(news);
+            complexNews.setAuthor(author);
+            complexNews.setTags(tags);
+            complexNews.setComments(comments);
+            return complexNews;
         } catch (DAOException e) {
             throw new ServiceException(e);
         }

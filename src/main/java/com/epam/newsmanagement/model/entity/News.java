@@ -16,14 +16,6 @@ public class News {
     public News() {
     }
 
-    public News(String shortText, String fullText, String title, Date creationDate, Date modificationDate) {
-        this.shortText = shortText;
-        this.fullText = fullText;
-        this.title = title;
-        this.creationDate = creationDate;
-        this.modificationDate = modificationDate;
-    }
-
     public News(long id, String shortText, String fullText, String title, Date creationDate, Date modificationDate) {
         this.id = id;
         this.shortText = shortText;

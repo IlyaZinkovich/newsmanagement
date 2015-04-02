@@ -12,8 +12,10 @@ public class Author {
     public Author() {
     }
 
-    public Author(String name) {
+    public Author(long id, String name, Date expired) {
+        this.id = id;
         this.name = name;
+        this.expired = expired;
     }
 
     public long getId() {

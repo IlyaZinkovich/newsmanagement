@@ -3,7 +3,7 @@ package com.epam.newsmanagement.service;
 import com.epam.newsmanagement.model.entity.*;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.service.exception.ServiceException;
-import com.epam.newsmanagement.service.implementations.*;
+import com.epam.newsmanagement.service.implementations.NewsManagementServiceImpl;
 import com.epam.newsmanagement.service.interfaces.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,21 +43,19 @@ public class NewsManagementServiceTest
     private Tag testTag;
     private List<Tag> testTags;
     private Comment testComment;
-    private ComplexNews testComplexNews;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         newsManagementService = new NewsManagementServiceImpl(newsService, authorService, tagService, commentService);
         testNews = new News(1, "short", "full", "title", new Date(), new Date());
-        testAuthor = new Author("author");
-        testTag = new Tag("tag");
+        testAuthor = new Author(1, "author", null);
+        testTag = new Tag(4, "tag");
         testTags = new LinkedList<>();
-        testTags.add(new Tag("1"));
-        testTags.add(new Tag("2"));
-        testTags.add(new Tag("3"));
-        testComment = new Comment("comment", new Date(), testNews.getId());
-        testComplexNews = new ComplexNews(testNews, testAuthor, testTags);
+        testTags.add(new Tag(1, "1"));
+        testTags.add(new Tag(2, "2"));
+        testTags.add(new Tag(3, "3"));
+        testComment = new Comment(1, "comment", new Date(), testNews.getId());
     }
 
     @Test

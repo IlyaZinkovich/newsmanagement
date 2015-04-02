@@ -5,12 +5,14 @@ import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
 import com.epam.newsmanagement.service.implementations.NewsServiceImpl;
+import com.epam.newsmanagement.service.interfaces.NewsService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -30,7 +32,7 @@ public class NewsServiceTest {
     @Mock
     private NewsDAO newsDAO;
 
-    private NewsServiceImpl newsService;
+    private NewsService newsService;
 
     private News testNews;
     private int testAuthorId;
@@ -50,6 +52,12 @@ public class NewsServiceTest {
         testTagsId.add(3);
     }
 
+    @Test
+    public void addNewsSucceed() throws Exception {
+        newsService.addNews(testNews);
+        verify(newsDAO).insert(testNews);
+        verifyNoMoreInteractions(newsDAO);
+    }
 
     @Test
     public void editNewsSucceed() throws ServiceException, DAOException {
@@ -65,26 +73,24 @@ public class NewsServiceTest {
     }
 
     @Test
-    public void editNewsDoesNothingIfNewsNotFound() throws ServiceException, DAOException {
-        when(newsDAO.findById(testNews.getId())).thenReturn(null);
-        newsService.editNews(testNews);
-        verify(newsDAO).findById(testNews.getId());
-        verifyNoMoreInteractions(newsDAO);
-    }
-
-    @Test
     public void deleteNewsSucceed() throws ServiceException, DAOException {
-        when(newsDAO.findById(testNews.getId())).thenReturn(testNews);
         newsService.deleteNews(testNews.getId());
-        verify(newsDAO).findById(testNews.getId());
         verify(newsDAO).delete(testNews.getId());
         verifyNoMoreInteractions(newsDAO);
     }
 
     @Test
-    public void deleteNewsDoesNothingIfNewsNotFound() throws ServiceException, DAOException {
-        when(newsDAO.findById(testNews.getId())).thenReturn(null);
-        newsService.deleteNews(testNews.getId());
+    public void findByIdSucceed() throws Exception {
+        when(newsDAO.findById(testNews.getId())).thenReturn(testNews);
+        newsService.findById(testNews.getId());
+        verify(newsDAO).findById(testNews.getId());
+        verifyNoMoreInteractions(newsDAO);
+    }
+
+    @Test
+    public void addNewsAuthorSucceed() throws Exception {
+        when(newsDAO.findById(testNews.getId())).thenReturn(testNews);
+        newsService.findById(testNews.getId());
         verify(newsDAO).findById(testNews.getId());
         verifyNoMoreInteractions(newsDAO);
     }
