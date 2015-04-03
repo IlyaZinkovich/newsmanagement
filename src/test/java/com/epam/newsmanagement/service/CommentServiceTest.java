@@ -4,19 +4,25 @@ import com.epam.newsmanagement.model.entity.Comment;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.service.implementations.CommentServiceImpl;
 import com.epam.newsmanagement.service.interfaces.CommentService;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertThat;
@@ -32,6 +38,7 @@ public class CommentServiceTest {
 
     private Comment testComment;
     private List<Comment> testComments;
+    private List<Long> testGeneratedIdList;
 
     @Before
     public void setUp() throws Exception {
@@ -41,12 +48,26 @@ public class CommentServiceTest {
         testComments = new LinkedList<>();
         testComments.add(testComment);
         testComments.add(new Comment(2, "first", new Date(), 1));
+        testGeneratedIdList = LongStream.rangeClosed(1, testComments.size()).mapToObj(l -> l)
+                .collect(Collectors.toList());
+    }
+
+    @Test
+    public void addCommentSucceed() throws Exception {
+        when(commentDAO.insert(testComment)).thenReturn(1l);
+        long generatedId = commentService.addComment(testComment);
+        assertThat(generatedId, greaterThan(0l));
+        verify(commentDAO).insert(testComment);
+        verifyNoMoreInteractions(commentDAO);
     }
 
     @Test
     public void addCommentsSucceed() throws Exception {
-        commentService.addComments(testComments);
-        verify(commentDAO, times(testComments.size())).insert(any(Comment.class));
+        when(commentDAO.insert(testComments)).thenReturn(testGeneratedIdList);
+        List<Long> generatedIdList = commentService.addComments(testComments);
+        assertThat(generatedIdList, is(testGeneratedIdList));
+        assertThat(generatedIdList.stream().allMatch(id -> id > 0), is(true));
+        verify(commentDAO).insert(testComments);
         verifyNoMoreInteractions(commentDAO);
     }
 

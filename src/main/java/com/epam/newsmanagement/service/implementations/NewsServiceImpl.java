@@ -36,8 +36,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public void editNews(News news) throws ServiceException {
         try {
-            if (newsDAO.findById(news.getId()) != null)
-                newsDAO.update(news);
+            newsDAO.update(news);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }

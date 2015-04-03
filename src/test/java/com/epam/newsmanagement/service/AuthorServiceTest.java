@@ -8,6 +8,8 @@ import com.epam.newsmanagement.service.implementations.AuthorServiceImpl;
 import com.epam.newsmanagement.service.implementations.CommentServiceImpl;
 import com.epam.newsmanagement.service.interfaces.AuthorService;
 import com.epam.newsmanagement.service.interfaces.CommentService;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +23,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertThat;
@@ -45,7 +49,9 @@ public class AuthorServiceTest {
 
     @Test
     public void addAuthorSucceed() throws Exception {
-        authorService.addAuthor(testAuthor);
+        when(authorDAO.insert(testAuthor)).thenReturn(1l);
+        long generatedId = authorService.addAuthor(testAuthor);
+        assertThat(generatedId, is(greaterThan(0l)));
         verify(authorDAO).insert(testAuthor);
         verifyNoMoreInteractions(authorDAO);
     }

@@ -34,16 +34,11 @@ public class CommentServiceImpl implements com.epam.newsmanagement.service.inter
 
     @Override
     public List<Long> addComments(List<Comment> comments) throws ServiceException {
-        List<Long> commentsIdList = new LinkedList<>();
         try {
-            for (Comment comment : comments) {
-                long commentId = commentDAO.insert(comment);
-                commentsIdList.add(commentId);
-            }
+            return commentDAO.insert(comments);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
-        return commentsIdList;
     }
 
     @Override
