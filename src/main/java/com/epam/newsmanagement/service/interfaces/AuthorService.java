@@ -1,6 +1,6 @@
 package com.epam.newsmanagement.service.interfaces;
 
-import com.epam.newsmanagement.model.entity.Author;
+import com.epam.newsmanagement.model.domain.Author;
 import com.epam.newsmanagement.service.exception.ServiceException;
 
 public interface AuthorService {

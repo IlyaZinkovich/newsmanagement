@@ -1,6 +1,6 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.entity.Comment;
+import com.epam.newsmanagement.model.domain.Comment;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.service.interfaces.CommentService;
 import org.junit.Before;

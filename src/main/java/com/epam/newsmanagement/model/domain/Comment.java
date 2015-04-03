@@ -1,4 +1,4 @@
-package com.epam.newsmanagement.model.entity;
+package com.epam.newsmanagement.model.domain;
 
 
 import java.util.Date;

@@ -1,7 +1,7 @@
 package com.epam.newsmanagement.service.interfaces;
 
-import com.epam.newsmanagement.model.entity.News;
-import com.epam.newsmanagement.model.entity.Tag;
+import com.epam.newsmanagement.model.domain.News;
+import com.epam.newsmanagement.model.domain.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.service.exception.ServiceException;
 

@@ -1,17 +1,19 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.entity.Comment;
+import com.epam.newsmanagement.model.domain.Comment;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
 public class CommentServiceImpl implements com.epam.newsmanagement.service.interfaces.CommentService {
+
+    private static Logger logger = Logger.getLogger(CommentServiceImpl.class);
 
     @Autowired
     private CommentDAO commentDAO;
@@ -28,6 +30,7 @@ public class CommentServiceImpl implements com.epam.newsmanagement.service.inter
         try {
             return commentDAO.insert(comment);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -37,6 +40,7 @@ public class CommentServiceImpl implements com.epam.newsmanagement.service.inter
         try {
             return commentDAO.insert(comments);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -46,6 +50,7 @@ public class CommentServiceImpl implements com.epam.newsmanagement.service.inter
         try {
             commentDAO.update(comment);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -55,6 +60,7 @@ public class CommentServiceImpl implements com.epam.newsmanagement.service.inter
         try {
             return commentDAO.findByNewsId(newsId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -64,6 +70,7 @@ public class CommentServiceImpl implements com.epam.newsmanagement.service.inter
         try {
             return commentDAO.findById(commentId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -73,6 +80,7 @@ public class CommentServiceImpl implements com.epam.newsmanagement.service.inter
         try {
             commentDAO.delete(commentId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }

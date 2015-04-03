@@ -1,8 +1,7 @@
 package com.epam.newsmanagement.service.interfaces;
 
-import com.epam.newsmanagement.model.entity.*;
+import com.epam.newsmanagement.model.domain.*;
 import com.epam.newsmanagement.service.exception.ServiceException;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

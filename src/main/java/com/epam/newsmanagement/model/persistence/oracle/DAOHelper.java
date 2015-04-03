@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * The interface that represents the template methods for all DAO.
  *
- * @param <T> the type of entity retrieved from the data source
+ * @param <T> the type of domain retrieved from the data source
  *
  */
 public interface DAOHelper<T> {

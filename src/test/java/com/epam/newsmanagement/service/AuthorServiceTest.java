@@ -1,6 +1,6 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.entity.Author;
+import com.epam.newsmanagement.model.domain.Author;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import com.epam.newsmanagement.service.interfaces.AuthorService;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package com.epam.newsmanagement.model.entity;
+package com.epam.newsmanagement.model.domain;
 
 
 import java.util.Date;
@@ -62,5 +62,14 @@ public class Author {
         result = 31 * result + name.hashCode();
         result = 31 * result + (expired != null ? expired.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", expired=" + expired +
+                '}';
     }
 }

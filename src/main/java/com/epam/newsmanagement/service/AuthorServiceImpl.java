@@ -1,15 +1,18 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.entity.Author;
+import com.epam.newsmanagement.model.domain.Author;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
 import com.epam.newsmanagement.service.interfaces.AuthorService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
+
+    private static Logger logger = Logger.getLogger(AuthorServiceImpl.class);
 
     @Autowired
     private AuthorDAO authorDAO;
@@ -26,6 +29,7 @@ public class AuthorServiceImpl implements AuthorService {
         try {
             return authorDAO.insert(author);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -35,6 +39,7 @@ public class AuthorServiceImpl implements AuthorService {
         try {
             authorDAO.update(author);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -44,6 +49,7 @@ public class AuthorServiceImpl implements AuthorService {
         try {
             authorDAO.delete(authorId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -53,6 +59,7 @@ public class AuthorServiceImpl implements AuthorService {
         try {
             return authorDAO.findByNewsId(newsId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -62,6 +69,7 @@ public class AuthorServiceImpl implements AuthorService {
         try {
             return authorDAO.findById(authorId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }

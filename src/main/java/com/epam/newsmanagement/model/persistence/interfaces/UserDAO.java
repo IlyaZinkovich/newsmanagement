@@ -1,6 +1,6 @@
 package com.epam.newsmanagement.model.persistence.interfaces;
 
-import com.epam.newsmanagement.model.entity.User;
+import com.epam.newsmanagement.model.domain.User;
 
 /**
  * A DatabaseAccessObject interface that

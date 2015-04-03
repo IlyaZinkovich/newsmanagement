@@ -1,7 +1,7 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
 
-import com.epam.newsmanagement.model.entity.Author;
+import com.epam.newsmanagement.model.domain.Author;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
     private DataSource dataSource;
 
     private final String UPDATE_AUTHOR_QUERY = "UPDATE Author " +
-            "set author_name = ? " +
+            "set author_name = ?, expired = ? " +
             "WHERE author_id = ?";
     private final String INSERT_AUTHOR_QUERY = "INSERT INTO Author " +
             "(author_name)" +
@@ -34,6 +34,7 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
             "WHERE author_id = ?";
     private final String DELETE_AUTHOR_QUERY = "DELETE Author WHERE author_id = ?";
     private final String SELECT_AUTHOR_BY_ID_QUERY = "SELECT Author.author_id, Author.author_name, Author.expired FROM Author WHERE author_id = ?";
+    private final String SELECT_ALL_AUTHORS_QUERY = "SELECT Author.author_id, Author.author_name, Author.expired FROM Author";
     private final String SELECT_AUTHOR_BY_NAME_QUERY = "SELECT Author.author_id, Author.author_name, Author.expired FROM Author WHERE author_name = ?";
     private final String SELECT_AUTHOR_BY_NEWS_ID_QUERY = "SELECT Author.author_id, Author.author_name, Author.expired FROM Author " +
             "INNER JOIN News_Author on Author.author_id = News_Author.author_id " +
@@ -44,7 +45,11 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
     public PreparedStatement prepareStatementForUpdate(Connection connection, Author author) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_AUTHOR_QUERY);
         preparedStatement.setString(1, author.getName());
-        preparedStatement.setLong(2, author.getId());
+        if (author.getExpired() != null)
+            preparedStatement.setTimestamp(2, new Timestamp(author.getExpired().getTime()));
+        else
+            preparedStatement.setTimestamp(2, null);
+        preparedStatement.setLong(3, author.getId());
         return preparedStatement;
     }
 
@@ -90,7 +95,8 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
 
     @Override
     public PreparedStatement prepareStatementForFindAll(Connection connection) throws SQLException {
-        throw new UnsupportedOperationException();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_AUTHORS_QUERY);
+        return preparedStatement;
     }
 
     @Override
@@ -142,8 +148,8 @@ public class OracleAuthorDAO implements AuthorDAO, DAOHelper<Author> {
 
     @Override
     public long insert(Author author) throws DAOException {
-//        Author foundAuthor = findByName(author.getName());
-//        if (foundAuthor != null) return foundAuthor.getId();
+        Author foundAuthor = findByName(author.getName());
+        if (foundAuthor != null) return foundAuthor.getId();
         return daoUtil.insert(author, this);
     }
 

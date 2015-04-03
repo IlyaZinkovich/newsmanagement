@@ -1,10 +1,11 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.entity.Tag;
+import com.epam.newsmanagement.model.domain.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
 import com.epam.newsmanagement.service.interfaces.TagService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,8 @@ import java.util.List;
 
 @Service
 public class TagServiceImpl implements TagService {
+
+    private static Logger logger = Logger.getLogger(TagServiceImpl.class);
 
     @Autowired
     private TagDAO tagDAO;
@@ -28,6 +31,7 @@ public class TagServiceImpl implements TagService {
         try {
             return tagDAO.insert(tag);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -37,6 +41,7 @@ public class TagServiceImpl implements TagService {
         try {
             return tagDAO.insert(tags);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -46,6 +51,7 @@ public class TagServiceImpl implements TagService {
         try {
             tagDAO.update(tag);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -55,6 +61,7 @@ public class TagServiceImpl implements TagService {
         try {
             tagDAO.delete(tagId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -64,6 +71,7 @@ public class TagServiceImpl implements TagService {
         try {
             return tagDAO.findByNewsId(newsId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }

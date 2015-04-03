@@ -1,11 +1,12 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.entity.News;
-import com.epam.newsmanagement.model.entity.Tag;
+import com.epam.newsmanagement.model.domain.News;
+import com.epam.newsmanagement.model.domain.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
 import com.epam.newsmanagement.service.exception.ServiceException;
 import com.epam.newsmanagement.service.interfaces.NewsService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,16 @@ import java.util.List;
 @Service
 public class NewsServiceImpl implements NewsService {
 
+    private static Logger logger = Logger.getLogger(NewsServiceImpl.class);
+
     @Autowired
     private NewsDAO newsDAO;
 
-    public NewsServiceImpl(NewsDAO newsDAO) {
-        this.newsDAO = newsDAO;
+    public NewsServiceImpl() {
     }
 
-    public NewsServiceImpl() {
+    public NewsServiceImpl(NewsDAO newsDAO) {
+        this.newsDAO = newsDAO;
     }
 
     @Override
@@ -29,6 +32,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.insert(news);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -38,6 +42,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             newsDAO.update(news);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -47,6 +52,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             newsDAO.delete(newsId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -61,6 +67,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             newsDAO.insertNewsAuthor(newsId, authorId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -70,6 +77,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             newsDAO.insertNewsTag(newsId, tagId);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -79,6 +87,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             newsDAO.insertNewsTags(newsId, tagIdList);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -88,6 +97,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.findByTags(tags);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -97,6 +107,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.findAll();
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -106,6 +117,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.findByAuthor(authorName);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -115,6 +127,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.findByTag(tagName);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -124,6 +137,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             return newsDAO.findByTags(tags);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }

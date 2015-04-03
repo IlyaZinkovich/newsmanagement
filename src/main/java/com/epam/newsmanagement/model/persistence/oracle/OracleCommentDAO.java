@@ -1,7 +1,7 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
 
-import com.epam.newsmanagement.model.entity.Comment;
+import com.epam.newsmanagement.model.domain.Comment;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;

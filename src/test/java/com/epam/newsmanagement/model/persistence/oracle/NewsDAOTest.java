@@ -1,7 +1,7 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
-import com.epam.newsmanagement.model.entity.News;
-import com.epam.newsmanagement.model.entity.Tag;
+import com.epam.newsmanagement.model.domain.News;
+import com.epam.newsmanagement.model.domain.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
@@ -11,8 +11,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
-import org.dbunit.Assertion;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +24,8 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -41,8 +37,8 @@ import static org.junit.Assert.assertThat;
         DirtiesContextTestExecutionListener.class,
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
-@DatabaseSetup("classpath:news-data.xml")
-public class NewsTest {
+@DatabaseSetup("classpath:dbunitxml/news-data.xml")
+public class NewsDAOTest {
 
     @Autowired
     private NewsDAO newsDAO;

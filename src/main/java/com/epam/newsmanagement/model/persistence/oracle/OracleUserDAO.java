@@ -1,6 +1,6 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
-import com.epam.newsmanagement.model.entity.User;
+import com.epam.newsmanagement.model.domain.User;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;

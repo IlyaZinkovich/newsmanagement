@@ -1,7 +1,7 @@
 package com.epam.newsmanagement.model.persistence.interfaces;
 
 
-import com.epam.newsmanagement.model.entity.Tag;
+import com.epam.newsmanagement.model.domain.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 
 import java.util.List;

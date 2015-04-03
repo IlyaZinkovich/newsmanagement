@@ -1,9 +1,10 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.entity.*;
+import com.epam.newsmanagement.model.domain.*;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.service.exception.ServiceException;
 import com.epam.newsmanagement.service.interfaces.*;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,8 @@ import java.util.List;
 
 @Service
 public class NewsManagementServiceImpl implements com.epam.newsmanagement.service.interfaces.NewsManagementService {
+
+    private static Logger logger = Logger.getLogger(NewsManagementServiceImpl.class);
 
     @Autowired
     private NewsService newsService;
@@ -25,6 +28,16 @@ public class NewsManagementServiceImpl implements com.epam.newsmanagement.servic
     @Autowired
     private CommentService commentService;
 
+    public NewsManagementServiceImpl() {
+    }
+
+    public NewsManagementServiceImpl(NewsService newsService, AuthorService authorService, TagService tagService, CommentService commentService) {
+        this.newsService = newsService;
+        this.authorService = authorService;
+        this.tagService = tagService;
+        this.commentService = commentService;
+    }
+
     @Transactional(rollbackFor = ServiceException.class)
     @Override
     public void addNewsAuthor(long newsId, Author author) throws ServiceException {
@@ -34,6 +47,7 @@ public class NewsManagementServiceImpl implements com.epam.newsmanagement.servic
                 newsService.addNewsAuthor(newsId, authorId);
             }
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -47,6 +61,7 @@ public class NewsManagementServiceImpl implements com.epam.newsmanagement.servic
                 newsService.addNewsTags(newsId, tagIdList);
             }
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -60,6 +75,7 @@ public class NewsManagementServiceImpl implements com.epam.newsmanagement.servic
                 newsService.addNewsTag(newsId, tagId);
             }
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
@@ -88,17 +104,8 @@ public class NewsManagementServiceImpl implements com.epam.newsmanagement.servic
             complexNews.setComments(comments);
             return complexNews;
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
         }
-    }
-
-    public NewsManagementServiceImpl(NewsService newsService, AuthorService authorService, TagService tagService, CommentService commentService) {
-        this.newsService = newsService;
-        this.authorService = authorService;
-        this.tagService = tagService;
-        this.commentService = commentService;
-    }
-
-    public NewsManagementServiceImpl() {
     }
 }
