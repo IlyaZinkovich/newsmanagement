@@ -2,7 +2,6 @@ package com.epam.newsmanagement.service;
 
 import com.epam.newsmanagement.model.entity.Tag;
 import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
-import com.epam.newsmanagement.service.implementations.TagServiceImpl;
 import com.epam.newsmanagement.service.interfaces.TagService;
 import org.junit.Before;
 import org.junit.Test;

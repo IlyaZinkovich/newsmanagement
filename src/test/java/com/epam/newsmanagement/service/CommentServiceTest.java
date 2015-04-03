@@ -2,9 +2,7 @@ package com.epam.newsmanagement.service;
 
 import com.epam.newsmanagement.model.entity.Comment;
 import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
-import com.epam.newsmanagement.service.implementations.CommentServiceImpl;
 import com.epam.newsmanagement.service.interfaces.CommentService;
-import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

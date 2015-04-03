@@ -1,4 +1,4 @@
-package com.epam.newsmanagement.service.implementations;
+package com.epam.newsmanagement.service;
 
 import com.epam.newsmanagement.model.entity.Comment;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;

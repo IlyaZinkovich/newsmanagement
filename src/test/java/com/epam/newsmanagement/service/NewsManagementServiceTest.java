@@ -1,9 +1,6 @@
 package com.epam.newsmanagement.service;
 
 import com.epam.newsmanagement.model.entity.*;
-import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.service.exception.ServiceException;
-import com.epam.newsmanagement.service.implementations.NewsManagementServiceImpl;
 import com.epam.newsmanagement.service.interfaces.*;
 import org.junit.Before;
 import org.junit.Test;
