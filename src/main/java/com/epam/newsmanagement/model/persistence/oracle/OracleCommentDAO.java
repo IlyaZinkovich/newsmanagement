@@ -127,7 +127,7 @@ public class OracleCommentDAO implements CommentDAO, DAOHelper<Comment> {
     public List<Comment> findByNewsId(long newsId) throws DAOException {
         List<Comment> items;
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = prepareStatementForFindById(connection, newsId);
+             PreparedStatement preparedStatement = prepareStatementForFindByNewsId(connection, newsId);
              ResultSet resultSet = preparedStatement.executeQuery()) {
                     items = parseResultSet(resultSet);
         } catch (SQLException e) {

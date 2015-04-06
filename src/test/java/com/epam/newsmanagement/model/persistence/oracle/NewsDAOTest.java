@@ -3,14 +3,10 @@ package com.epam.newsmanagement.model.persistence.oracle;
 import com.epam.newsmanagement.model.domain.News;
 import com.epam.newsmanagement.model.domain.Tag;
 import com.epam.newsmanagement.model.persistence.exception.DAOException;
-import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
-import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
 import com.epam.newsmanagement.model.persistence.interfaces.NewsDAO;
-import com.epam.newsmanagement.model.persistence.interfaces.TagDAO;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.ExpectedDatabase;
-import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +21,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -43,87 +40,64 @@ public class NewsDAOTest {
     @Autowired
     private NewsDAO newsDAO;
 
-    @Autowired
-    private CommentDAO commentDAO;
-
-    @Autowired
-    private TagDAO tagDAO;
-
-    @Autowired
-    private AuthorDAO authorDAO;
-
-    private News news;
+    private News testNews;
+    private final int testDataSize = 3;
+    private final String testAuthorName = "John";
+    private final String testTagName = "first";
+    private List<Tag> testTagList;
 
     @Before
     public void setUp() {
-        news = new News();
-        news.setTitle("title");
-        news.setShortText("short");
-        news.setFullText("full");
-        news.setCreationDate(new Date());
-        news.setModificationDate(new Date());
+        testNews = new News(4, "fourthShort", "fourthFull", "fourthTitle", new Date(), new Date());
+        testTagList = new LinkedList<>();
+        testTagList.add(new Tag(1, "first"));
+        testTagList.add(new Tag(2, "second"));
     }
 
     @Test
-    public void addNews() throws DAOException {
+    public void findAllSucceed() throws Exception {
+        List<News> foundNews = newsDAO.findAll();
+        assertThat(foundNews, notNullValue());
+        assertEquals(foundNews.size(), testDataSize);
+    }
+
+    @Test
+    public void addNewsSucceed() throws Exception {
         int beforeSize = newsDAO.findAll().size();
-        Long newsId = newsDAO.insert(news);
+        Long newsId = newsDAO.insert(testNews);
         int afterSize = newsDAO.findAll().size();
         assertThat(afterSize, is(beforeSize + 1));
         assertThat(newsDAO.findById(newsId), notNullValue());
     }
 
     @Test
-    public void editNews() throws DAOException {
-        News news = newsDAO.findAll().get(0);
-        Long newsId = news.getId();
-        Date testDate = new Date();
-        String testShort = "testShort";
-        String testFull = "testFull";
-        String testTitle = "testTitle";
-        setNewsTestData(news, testDate, testShort, testFull, testTitle);
-        newsDAO.update(news);
-        news = newsDAO.findById(newsId);
+    public void editNewsSucceed() throws Exception {
+        long newsToUpdateId = newsDAO.findAll().get(0).getId();
+        testNews.setId(newsToUpdateId);
+        newsDAO.update(testNews);
+        News news = newsDAO.findById(testNews.getId());
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        assertThat(news.getShortText(), is(testShort));
-        assertThat(news.getFullText(), is(testFull));
-        assertThat(news.getTitle(), is(testTitle));
-        assertThat(news.getCreationDate(), is(testDate));
-        assertThat(formatter.format(news.getModificationDate()), is(formatter.format(testDate)));
+        assertThat(news.getShortText(), is(testNews.getShortText()));
+        assertThat(news.getFullText(), is(testNews.getFullText()));
+        assertThat(news.getTitle(), is(testNews.getTitle()));
+        assertThat(news.getCreationDate(), is(testNews.getCreationDate()));
+        assertThat(formatter.format(news.getModificationDate()), is(formatter.format(testNews.getModificationDate())));
     }
 
-    private void setNewsTestData(News news, Date testDate, String testShort, String testFull, String testTitle) {
-        news.setShortText(testShort);
-        news.setFullText(testFull);
-        news.setTitle(testTitle);
-        news.setCreationDate(testDate);
-        news.setModificationDate(testDate);
-    }
 
     @Test
-    @ExpectedDatabase(value = "", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
-    public void deleteNews() throws DAOException {
+    public void deleteNewsSucceed() throws DAOException {
         List<News> newsList = newsDAO.findAll();
-        News news = newsList.get(0);
-        Long newsToDeleteId = news.getId();
-        newsDAO.delete(news.getId());
-        int afterSize = newsDAO.findAll().size();
         int beforeSize = newsList.size();
+        long newsToDeleteId = newsList.get(0).getId();
+        newsDAO.delete(newsToDeleteId);
+        int afterSize = newsDAO.findAll().size();
         assertThat(afterSize, is(beforeSize - 1));
         assertThat(newsDAO.findById(newsToDeleteId), nullValue());
     }
 
-//    @Test
-//    public void findAllNews() throws DAOException {
-//        List<News> newsList = newsDAO.findAll();
-//        int maxCommentsCount = newsList.stream().mapToInt(n -> commentDAO.findByNewsId(n.getId()).size()).max().getAsInt();
-//        int firstNewsCommentsCount = commentDAO.findByNewsId(newsList.get(0).getId()).size();
-//        assertThat(newsList.size(), is(3));
-//        assertThat(firstNewsCommentsCount, is(maxCommentsCount));
-//    }
-
     @Test
-    public void findSingleNews() throws DAOException {
+    public void findSingleNewsSucceed() throws Exception {
         Long newsId = newsDAO.findAll().get(0).getId();
         News news = newsDAO.findById(newsId);
         assertThat(news, notNullValue());
@@ -131,21 +105,20 @@ public class NewsDAOTest {
     }
 
     @Test
-    public void findByTags() throws DAOException {
-        News news = newsDAO.findAll().get(0);
-        List<Tag> tags = tagDAO.findAll();
-        List<News> foundByTagsNews = newsDAO.findByTags(tags);
-        assertThat(foundByTagsNews, notNullValue());
+    public void findNewsByTagSucceed() throws Exception {
+        List<News> foundNews = newsDAO.findByTag(testTagName);
+        assertEquals(foundNews.size(), 2);
     }
 
-//    @Test
-//    public void addComment() throws DAOException {
-//        News news = newsDAO.findAll().get(0);
-//        Comment comment = new Comment("testComment", new Date(), news.getId());
-//        Long commentId = commentDAO.insert(comment);
-//        Comment foundByIdComment = commentDAO.findById(commentId);
-//        assertThat(foundByIdComment, notNullValue());
-//        assertThat(foundByIdComment.getNewsId(), is(news.getId()));
-//    }
+    @Test
+    public void findNewsByAuthorSucceed() throws Exception {
+        List<News> foundNews = newsDAO.findByAuthor(testAuthorName);
+        assertEquals(foundNews.size(), 2);
+    }
 
+    @Test
+    public void findNewsByTagsSucceed() throws Exception {
+        List<News> foundNews = newsDAO.findByTags(testTagList);
+        assertEquals(foundNews.size(), 2);
+    }
 }

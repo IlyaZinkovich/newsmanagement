@@ -1,6 +1,7 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.domain.Author;
+import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -34,16 +35,23 @@ import static org.mockito.Matchers.eq;
 @DatabaseSetup("classpath:dbunitxml/author-data.xml")
 public class AuthorDAOTest {
 
-    private static Logger logger = Logger.getLogger(AuthorDAOTest.class);
-
     @Autowired
     private AuthorDAO authorDAO;
 
     private Author testAuthor;
+    private Author existingTestAuthor;
+    private final int testDataSize = 2;
 
     @Before
     public void setUp() {
-        testAuthor = new Author(1, "Dave", null);
+        testAuthor = new Author(3, "Dave", null);
+        existingTestAuthor = new Author(1, "John", null);
+    }
+
+    @Test
+    public void findAllSucceed() throws Exception {
+        List<Author> foundAuthors = authorDAO.findAll();
+        assertThat(foundAuthors.size(), is(testDataSize));
     }
 
     @Test
@@ -72,24 +80,33 @@ public class AuthorDAOTest {
         List<Author> foundAuthorsBefore = authorDAO.findAll();
         Author authorToUpdate = foundAuthorsBefore.get(0);
         authorToUpdate.setExpired(new Date());
+        authorToUpdate.setName(testAuthor.getName());
         authorDAO.update(authorToUpdate);
         Author updatedAuthor = authorDAO.findById(authorToUpdate.getId());
         assertEquals(authorToUpdate, updatedAuthor);
     }
 
+    @Test
+    public void deleteAuthorSucceed() throws Exception {
+        List<Author> foundAuthorsBefore = authorDAO.findAll();
+        Author authorToDelete = foundAuthorsBefore.get(0);
+        authorDAO.delete(authorToDelete.getId());
+        Author deletedAuthor = authorDAO.findById(authorToDelete.getId());
+        assertThat(deletedAuthor, nullValue());
+    }
+
+    @Test
+    public void findByNewsIdSucceed() throws Exception {
+        Author foundAuthor = authorDAO.findByNewsId(1);
+        assertThat(foundAuthor.getName(), is(existingTestAuthor.getName()));
+    }
+
+    @Test
+    public void findByNameSucceed() throws Exception {
+        Author foundAuthor = authorDAO.findByName(existingTestAuthor.getName());
+        assertThat(foundAuthor.getName(), is(existingTestAuthor.getName()));
+    }
 
 
-//    @Test
-//    @ExpectedDatabase(value = "", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED)
-//    public void deleteNews() throws DAOException {
-//        List<News> newsList = newsDAO.findAll();
-//        News news = newsList.get(0);
-//        Long newsToDeleteId = news.getId();
-//        newsDAO.delete(news.getId());
-//        int afterSize = newsDAO.findAll().size();
-//        int beforeSize = newsList.size();
-//        assertThat(afterSize, is(beforeSize - 1));
-//        assertThat(newsDAO.findById(newsToDeleteId), nullValue());
-//    }
 
 }

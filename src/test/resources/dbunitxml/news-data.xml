@@ -12,9 +12,9 @@
     <NEWS_TAG news_id="1" tag_id="1"/>
     <NEWS_TAG news_id="2" tag_id="2"/>
     <NEWS_TAG news_id="3" tag_id="3"/>
-    <NEWS_TAG news_id="1" tag_id="1"/>
-    <NEWS_TAG news_id="1" tag_id="1"/>
-    <NEWS_TAG news_id="2" tag_id="2"/>
+    <NEWS_TAG news_id="1" tag_id="3"/>
+    <NEWS_TAG news_id="1" tag_id="2"/>
+    <NEWS_TAG news_id="2" tag_id="1"/>
     <AUTHOR author_id="1" AUTHOR_NAME="John" />
     <AUTHOR author_id="2" AUTHOR_NAME="Bill" />
     <NEWS_AUTHOR news_id="1" author_id="1"/>

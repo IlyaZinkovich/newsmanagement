@@ -75,4 +75,14 @@ public class Comment {
         result = 31 * result + (int) (newsId ^ (newsId >>> 32));
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", commentText='" + commentText + '\'' +
+                ", creationDate=" + creationDate +
+                ", newsId=" + newsId +
+                '}';
+    }
 }

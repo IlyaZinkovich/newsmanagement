@@ -6,17 +6,12 @@
           creation_date="2015-01-30 10:55:55" modification_date="2015-01-30"/>
     <NEWS news_id="3" short_text="thirdShort" full_text="thirdFull" title="thirdTitle"
           creation_date="2015-02-23 10:55:55" modification_date="2015-02-23"/>
-    <TAG tag_id="1" tag_name="first"/>
-    <TAG tag_id="2" tag_name="second"/>
-    <TAG tag_id="3" tag_name="third"/>
     <NEWS_TAG news_id="1" tag_id="1"/>
     <NEWS_TAG news_id="2" tag_id="2"/>
     <NEWS_TAG news_id="3" tag_id="3"/>
     <NEWS_TAG news_id="1" tag_id="1"/>
     <NEWS_TAG news_id="1" tag_id="1"/>
     <NEWS_TAG news_id="2" tag_id="2"/>
-    <AUTHOR author_id="1" AUTHOR_NAME="John" />
-    <AUTHOR author_id="2" AUTHOR_NAME="Bill" />
     <NEWS_AUTHOR news_id="1" author_id="1"/>
     <NEWS_AUTHOR news_id="2" author_id="1"/>
     <NEWS_AUTHOR news_id="3" author_id="2"/>

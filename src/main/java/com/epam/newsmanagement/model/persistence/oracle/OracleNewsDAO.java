@@ -34,7 +34,7 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
             "(news_id, tag_id)" +
             " VALUES (?, ?)";
     private final String UPDATE_NEWS_QUERY = "UPDATE News " +
-        "SET short_text = ?, full_text = ?, title = ?, creation_date = ?, modification_date = ?" +
+        "SET short_text = ?, full_text = ?, title = ?, creation_date = ?, modification_date = ? " +
         "WHERE news_id = ?";
     private final String DELETE_NEWS_QUERY = "DELETE News WHERE news_id = ?";
     private final String SELECT_ALL_NEWS_QUERY = "SELECT News.news_id, News.short_text, News.full_text, News.title, " +
@@ -47,10 +47,10 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
     private final String SELECT_NEWS_BY_ID_QUERY = "SELECT * FROM News WHERE news_id = ?";
     private final String FIND_NEWS_BY_AUTHOR_NAME_QUERY = "SELECT News.news_id, News.short_text, News.full_text, " +
             "News.title, News.creation_date, News.modification_date " +
-            "FROM News" +
-            "INNER JOIN News_author ON News_author.news_id = News.news_id" +
-            "INNER JOIN Author ON Author.author_id = News_author.AUTHOR_ID" +
-            "WHERE Author.name = ?";
+            "FROM News " +
+            "INNER JOIN News_author ON News_author.news_id = News.news_id " +
+            "INNER JOIN Author ON Author.author_id = News_author.AUTHOR_ID " +
+            "WHERE Author.author_name = ?";
     private final String FIND_NEWS_BY_AUTHOR_ID_QUERY = "SELECT News.news_id, News.short_text, News.full_text, " +
             "News.title, News.creation_date, News.modification_date, Author.author_id " +
             "FROM News " +
@@ -59,15 +59,15 @@ public class OracleNewsDAO implements NewsDAO, DAOHelper<News> {
             "WHERE Author.AUTHOR_ID=?";
     private final String FIND_NEWS_BY_TAG_NAME_QUERY = "SELECT News.news_id, News.short_text, News.full_text, " +
             "News.title, News.creation_date, News.modification_date " +
-            "FROM News" +
-            "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id" +
-            "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id" +
+            "FROM News " +
+            "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id " +
+            "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id " +
             "WHERE Tag.tag_name = ?";
     private final String FIND_NEWS_BY_TAG_ID_QUERY = "SELECT News.news_id, News.short_text, News.full_text, " +
             "News.title, News.creation_date, News.modification_date " +
-            "FROM News" +
-            "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id" +
-            "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id" +
+            "FROM News " +
+            "INNER JOIN News_Tag ON News_Tag.news_id = News.news_id " +
+            "INNER JOIN Tag ON Tag.tag_id = News_Tag.tag_id " +
             "WHERE Tag.tag_id = ?";
 
     private final String FIND_NEWS_BY_TAGS_NAME_QUERY_BEGIN = "SELECT News.news_id, News.short_text, " +
