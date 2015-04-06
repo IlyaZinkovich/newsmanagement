@@ -1,11 +1,9 @@
 package com.epam.newsmanagement.model.persistence.oracle;
 
 import com.epam.newsmanagement.model.domain.Author;
-import com.epam.newsmanagement.model.persistence.exception.DAOException;
 import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,10 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:spring-test.xml")

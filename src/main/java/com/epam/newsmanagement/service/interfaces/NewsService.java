@@ -118,7 +118,7 @@ public interface NewsService {
      * @throws  ServiceException
      *          In case of {@code DAOException}
      */
-    List<News> findAll() throws DAOException, ServiceException;
+    List<News> findAll() throws ServiceException;
 
     /**
      * Returns the list of news which have the author with the specified name.
