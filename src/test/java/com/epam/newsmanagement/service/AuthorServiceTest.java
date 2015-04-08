@@ -1,8 +1,8 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.domain.Author;
-import com.epam.newsmanagement.model.persistence.interfaces.AuthorDAO;
-import com.epam.newsmanagement.service.interfaces.AuthorService;
+import com.epam.newsmanagement.domain.Author;
+import com.epam.newsmanagement.dao.AuthorDAO;
+import com.epam.newsmanagement.service.implementation.AuthorServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

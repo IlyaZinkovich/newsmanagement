@@ -1,8 +1,8 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.domain.Comment;
-import com.epam.newsmanagement.model.persistence.interfaces.CommentDAO;
-import com.epam.newsmanagement.service.interfaces.CommentService;
+import com.epam.newsmanagement.domain.Comment;
+import com.epam.newsmanagement.dao.CommentDAO;
+import com.epam.newsmanagement.service.implementation.CommentServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

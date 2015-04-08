@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <TAG tag_id="1" TAG_NAME="Politics" />
+    <TAG tag_id="2" TAG_NAME="Economics" />
+    <TAG tag_id="3" TAG_NAME="Sports" />
+    <NEWS_TAG news_id="1" tag_id="1" />
+    <NEWS_TAG news_id="1" tag_id="3" />
+    <NEWS_TAG news_id="2" tag_id="2" />
+</dataset>

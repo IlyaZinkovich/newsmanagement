@@ -1,7 +1,7 @@
 package com.epam.newsmanagement.service;
 
-import com.epam.newsmanagement.model.domain.*;
-import com.epam.newsmanagement.service.interfaces.*;
+import com.epam.newsmanagement.domain.*;
+import com.epam.newsmanagement.service.implementation.NewsManagementServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,8 +1,9 @@
 package com.epam.newsmanagement.service.exception;
 
-import com.epam.newsmanagement.exception.NewsManagementException;
-
-public class ServiceException extends NewsManagementException {
+/**
+ * Created by Ilya_Zinkovich on 4/8/2015.
+ */
+public class ServiceException extends Exception {
     public ServiceException() {
     }
 

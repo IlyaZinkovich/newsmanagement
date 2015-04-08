@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <COMMENTS comment_id="1" COMMENT_TEXT="first" CREATION_DATE="2015-03-15 10:55:55" NEWS_ID="1" />
+    <COMMENTS comment_id="2" COMMENT_TEXT="second" CREATION_DATE="2015-01-30 10:55:55" NEWS_ID="1" />
+    <COMMENTS comment_id="3" COMMENT_TEXT="third" CREATION_DATE="2015-02-23 10:55:55" NEWS_ID="2" />
+</dataset>

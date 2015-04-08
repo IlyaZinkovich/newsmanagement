@@ -1,0 +1,29 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:db.config.properties"/>
+    </bean>
+
+    <!-- Oracle connection pool -->
+    <bean id="dataSource" class="oracle.jdbc.pool.OracleDataSource"
+          destroy-method="close">
+        <property name="connectionCachingEnabled" value="true" />
+        <property name="URL" value="${db.url}" />
+        <property name="user" value="${db.username}" />
+        <property name="password" value="${db.password}" />
+        <property name="connectionCacheProperties">
+            <value>
+                MinLimit:1
+                MaxLimit:20
+                InitialLimit:1
+                ConnectionWaitTimeout:120
+                InactivityTimeout:180
+                ValidateConnection:true
+            </value>
+        </property>
+    </bean>
+
+</beans>
